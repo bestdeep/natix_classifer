@@ -40,7 +40,7 @@ export CUDA_VISIBLE_DEVICES="${CUDA_DEVICES}"
 echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 echo "Running ensemble test with checkpoints: ${CKPTS[*]}"
 
-python scripts/test.py \
+python test.py \
   --model-checkpoints ${CKPT_ARGS} \
   --model-name "${MODEL_NAME}" \
   ${TEST_ARGS} \

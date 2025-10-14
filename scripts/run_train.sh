@@ -58,7 +58,7 @@ echo "Starting training for models:${MODEL_ARR[*]}"
 echo "Output dir: ${OUTPUT_DIR}"
 echo "TensorBoard dir: ${TB_LOGDIR}"
 
-python scripts/train.py \
+python train.py \
   --models ${MODELS_ARGS} \
   ${TRAIN_ARGS} \
   --val-split "${VAL_SPLIT}" \
