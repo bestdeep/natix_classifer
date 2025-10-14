@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # run_train.sh
 # Example: ./run_train.sh convnext_small,resnet18 /data/train /data/val checkpts tb_logs 0
-# MODELS comma-separated, TRAIN_DIRS and VAL_DIRS can be colon-separated lists (will be split into multiple args)
+# MODELS comma-separated, TRAIN_DIRS can be colon-separated lists (will be split into multiple args)
 
 set -euo pipefail
 
@@ -32,9 +32,9 @@ LOG_EVERY_STEPS="${LOG_EVERY_STEPS:-50}"
 LOG_IMAGE_COUNT="${LOG_IMAGE_COUNT:-16}"
 WARMUP_EPOCHS="${WARMUP_EPOCHS:-2}"
 
-if [ -z "$MODELS" ] || [ -z "$TRAIN_DIRS" ] || [ -z "$VAL_DIRS" ]; then
-  echo "Usage: $0 <models(comma-separated)> <train_dirs(colon-separated)> <val_dirs(colon-separated)> [output_dir] [tb_logdir] [cuda_devices]"
-  echo "Example: $0 convnext_small,resnet18 /data/train1:/data/train2 /data/val checkpts tb_logs 0,1"
+if [ -z "$MODELS" ] || [ -z "$TRAIN_DIRS" ]; then
+  echo "Usage: $0 <models(comma-separated)> <train_dirs(colon-separated)> [val_split] [output_dir] [tb_logdir] [cuda_devices]"
+  echo "Example: $0 convnext_small,resnet18 /data/train1:/data/train2 0.2 checkpts tb_logs 0,1"
   exit 2
 fi
 
@@ -50,12 +50,6 @@ IFS=':' read -ra TDIRS <<< "$TRAIN_DIRS"
 TRAIN_ARGS=""
 for d in "${TDIRS[@]}"; do
   TRAIN_ARGS+=" --train-dirs $d"
-done
-
-IFS=':' read -ra VDIRS <<< "$VAL_DIRS"
-VAL_ARGS=""
-for d in "${VDIRS[@]}"; do
-  VAL_ARGS+=" --val-dirs $d"
 done
 
 export CUDA_VISIBLE_DEVICES="${CUDA_DEVICES}"
