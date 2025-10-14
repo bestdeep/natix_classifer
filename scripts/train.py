@@ -109,7 +109,7 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", nargs="+", required=True, help="List of backbone model names to train and ensemble")
     parser.add_argument("--train-dirs", nargs="+", required=True, help="Directories for training images")
-    parser.add_argument("--val-dirs", nargs="+", required=True, help="Directories for validation images")
+    parser.add_argument("--val-split", type=float, default=0.2, help="Fraction of data used for validation (0–1)")
     parser.add_argument("--output-dir", type=str, default="checkpoints")
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=32)
@@ -142,8 +142,21 @@ if __name__=="__main__":
     transform_train = make_transforms(args.image_size)
     transform_val = make_transforms(args.image_size)
 
-    train_ds = NatixDataset(dirs=args.train_dirs, transform=transform_train, augment=args.augment)
-    val_ds = NatixDataset(dirs=args.val_dirs, transform=transform_val, label_map=train_ds.label_map)
+    full_ds = NatixDataset(dirs=args.train_dirs, transform=transform_train, augment=args.augment)
+
+    num_samples = len(full_ds)
+    indices = list(range(num_samples))
+    random.shuffle(indices)
+
+    split = int(num_samples * (1 - args.val_split))
+    train_indices, val_indices = indices[:split], indices[split:]
+
+    # Create subsets
+    train_ds = Subset(full_ds, train_indices)
+
+    # For validation, we use the same dataset but with val transform (no augmentation)
+    val_base = NatixDataset(dirs=args.train_dirs, transform=transform_val, label_map=full_ds.label_map)
+    val_ds = Subset(val_base, val_indices)
 
     if args.real_only_val:
         idxs = filter_real_only_indices(val_ds, is_synthetic_key=args.is_synthetic_key)

@@ -11,7 +11,7 @@ chmod +x run_train.sh
 
 Multi-train dirs, multi-val dirs:
 ```bash
-./run_train.sh "convnext_small,efficientnet_b3" "/data/trainA:/data/trainB" "/data/valA:/data/valB" "checkpoints" "tb_logs" "0,1"
+./run_train.sh "convnext_small,efficientnet_b3" "/workspace/hf_extracted_images/natix-network-org_roadwork:/workspace/synthetic/i2i:/workspace/synthetic/t2i" 0.1 "checkpoints" "tb_logs" "0,1"
 ```
 
 ```bash

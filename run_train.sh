@@ -10,7 +10,7 @@ set -euo pipefail
 # -----------------------
 MODELS="${1:-}"            # comma-separated backbone names (required)
 TRAIN_DIRS="${2:-}"        # colon-separated paths (required)
-VAL_DIRS="${3:-}"          # colon-separated paths (required)
+VAL_SPLIT="${3:-0.2}"      # fraction of data used for validation (0–1)
 OUTPUT_DIR="${4:-checkpoints}"
 TB_LOGDIR="${5:-tb_logs}"
 CUDA_DEVICES="${6:-0}"     # e.g. "0" or "0,1"
@@ -67,7 +67,7 @@ echo "TensorBoard dir: ${TB_LOGDIR}"
 python scripts/train.py \
   --models ${MODELS_ARGS} \
   ${TRAIN_ARGS} \
-  ${VAL_ARGS} \
+  --val-split "${VAL_SPLIT}" \
   --output-dir "${OUTPUT_DIR}" \
   --epochs "${EPOCHS}" \
   --batch-size "${BATCH_SIZE}" \
