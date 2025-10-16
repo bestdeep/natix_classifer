@@ -61,3 +61,16 @@ Downloading: "https://download.pytorch.org/models/resnet50-0676ba61.pth" to /roo
 [6/20] Train Acc: 0.7826, Loss: 0.0863, Val Acc: 0.9138, Loss: 0.3556
 [7/20] Train Acc: 0.7893, Loss: 0.0836, Val Acc: 0.8964, Loss: 0.3947
 [8/20] Train Acc: 0.7929, Loss: 0.0813, Val Acc: 0.9211, Loss: 0.3520
+[9/20] Train Acc: 0.7950, Loss: 0.0815, Val Acc: 0.9197, Loss: 0.3358
+[10/20] Train Acc: 0.8104, Loss: 0.0776, Val Acc: 0.9339, Loss: 0.3286
+[11/20] Train Acc: 0.8136, Loss: 0.0790, Val Acc: 0.9288, Loss: 0.3217
+[12/20] Train Acc: 0.8300, Loss: 0.0723, Val Acc: 0.9256, Loss: 0.3501
+[13/20] Train Acc: 0.8215, Loss: 0.0722, Val Acc: 0.9288, Loss: 0.3567
+[14/20] Train Acc: 0.8203, Loss: 0.0677, Val Acc: 0.9297, Loss: 0.3925
+[15/20] Train Acc: 0.8319, Loss: 0.0667, Val Acc: 0.9316, Loss: 0.3727
+[16/20] Train Acc: 0.8185, Loss: 0.0606, Val Acc: 0.9389, Loss: 0.3040
+[17/20] Train Acc: 0.8236, Loss: 0.0638, Val Acc: 0.9398, Loss: 0.2643
+[18/20] Train Acc: 0.8322, Loss: 0.0575, Val Acc: 0.9352, Loss: 0.2688
+[19/20] Train Acc: 0.8439, Loss: 0.0582, Val Acc: 0.9398, Loss: 0.2515
+[20/20] Train Acc: 0.8469, Loss: 0.0613, Val Acc: 0.9370, Loss: 0.2942
+Model resnet50 best checkpoint saved at: checkpoints/resnet50_best.pth

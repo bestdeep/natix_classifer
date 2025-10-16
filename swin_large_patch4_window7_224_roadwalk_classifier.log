@@ -1,0 +1,43 @@
+Using device: cuda
+Training directories: ['/workspace/hf_extracted_images', '/workspace/synthetic']
+Models to train: ['swin_large_patch4_window7_224']
+Total samples: 21919, Train: 19727, Val: 2192
+
+=== Training model: swin_large_patch4_window7_224 ===
+TensorBoard logs -> tb_logs/swin_large_patch4_window7_224_20251016_140917
+Starting DANN pretraining for 30 epochs
+[DANN pretrain 1/30] train_f1=0.9005 train_loss=1.2327 | val_acc=0.8923 val_loss=0.2430
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 2/30] train_f1=0.9168 train_loss=0.9107 | val_acc=0.8969 val_loss=0.3094
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 3/30] train_f1=0.9157 train_loss=0.9141 | val_acc=0.8974 val_loss=0.2471
+[DANN pretrain 4/30] train_f1=0.9162 train_loss=0.9320 | val_acc=0.8896 val_loss=0.2697
+[DANN pretrain 5/30] train_f1=0.9274 train_loss=0.8996 | val_acc=0.8859 val_loss=0.2962
+[DANN pretrain 6/30] train_f1=0.9341 train_loss=0.8801 | val_acc=0.9220 val_loss=0.1976
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 7/30] train_f1=0.9298 train_loss=0.8961 | val_acc=0.8723 val_loss=0.2991
+[DANN pretrain 8/30] train_f1=0.9294 train_loss=0.8806 | val_acc=0.9261 val_loss=0.1889
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 9/30] train_f1=0.9355 train_loss=0.8622 | val_acc=0.9183 val_loss=0.2132
+[DANN pretrain 10/30] train_f1=0.9409 train_loss=0.8546 | val_acc=0.9124 val_loss=0.2312
+[DANN pretrain 11/30] train_f1=0.9392 train_loss=0.8567 | val_acc=0.8983 val_loss=0.2582
+[DANN pretrain 12/30] train_f1=0.9430 train_loss=0.8455 | val_acc=0.8932 val_loss=0.2853
+[DANN pretrain 13/30] train_f1=0.9466 train_loss=0.8369 | val_acc=0.9151 val_loss=0.2172
+[DANN pretrain 14/30] train_f1=0.9474 train_loss=0.8351 | val_acc=0.9297 val_loss=0.2039
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 15/30] train_f1=0.9465 train_loss=0.8373 | val_acc=0.9211 val_loss=0.2130
+[DANN pretrain 16/30] train_f1=0.9509 train_loss=0.8264 | val_acc=0.9266 val_loss=0.1804
+[DANN pretrain 17/30] train_f1=0.9520 train_loss=0.8180 | val_acc=0.9224 val_loss=0.2025
+[DANN pretrain 18/30] train_f1=0.9522 train_loss=0.8229 | val_acc=0.9266 val_loss=0.1981
+[DANN pretrain 19/30] train_f1=0.9536 train_loss=0.8118 | val_acc=0.9183 val_loss=0.2036
+[DANN pretrain 20/30] train_f1=0.9532 train_loss=0.8187 | val_acc=0.9197 val_loss=0.2040
+[DANN pretrain 21/30] train_f1=0.9530 train_loss=0.8130 | val_acc=0.9284 val_loss=0.1959
+[DANN pretrain 22/30] train_f1=0.9550 train_loss=0.8118 | val_acc=0.9261 val_loss=0.2044
+[DANN pretrain 23/30] train_f1=0.9574 train_loss=0.8036 | val_acc=0.9302 val_loss=0.2102
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 24/30] train_f1=0.9582 train_loss=0.8045 | val_acc=0.9252 val_loss=0.2146
+[DANN pretrain 25/30] train_f1=0.9572 train_loss=0.8055 | val_acc=0.9243 val_loss=0.2186
+[DANN pretrain 26/30] train_f1=0.9590 train_loss=0.7966 | val_acc=0.8773 val_loss=0.3037
+[DANN pretrain 27/30] train_f1=0.9601 train_loss=0.7979 | val_acc=0.9174 val_loss=0.2387
+[DANN pretrain 28/30] train_f1=0.9617 train_loss=0.7932 | val_acc=0.9279 val_loss=0.1905
+[DANN pretrain 29/30] train_f1=0.9641 train_loss=0.7839 | val_acc=0.9115 val_loss=0.2496

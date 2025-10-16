@@ -1,5 +1,5 @@
 # train.py
-import os, re
+import os
 import argparse
 import random
 from datetime import datetime
@@ -23,6 +23,7 @@ from model.utils import (
     filter_real_only_indices,
     evaluate,
     evaluate_ensemble,
+    normalize_arg_list,
     FocalLoss
     )
 
@@ -106,7 +107,7 @@ def train_single_model(args, model_name:str, train_ds: NatixDataset, val_ds: Nat
         val_metrics = evaluate(model, val_loader, device, num_classes)
 
         print(f"[{epoch+1}/{args.epochs}] Train Acc: {train_acc:.4f}, Loss: {train_loss:.4f}, Val Acc: {val_metrics['accuracy']:.4f}, Loss: {val_metrics['loss']:.4f}")
-        if writer and step%args.log_every_steps==0:
+        if writer:
             writer.add_scalar("train/loss", train_loss, epoch)
             writer.add_scalar("train/acc", train_acc, epoch)
 
@@ -136,15 +137,6 @@ def train_single_model(args, model_name:str, train_ds: NatixDataset, val_ds: Nat
     return best_ckpt_path
 
 
-def normalize_arg_list(x):
-    if x is None:
-        return []
-    # If argparse already gave a list (nargs="+"), join then split to normalize mixed input
-    if isinstance(x, list):
-        x = " ".join(x)
-    # split on comma, plus, colon or whitespace
-    parts = re.split(r"[,\+: \t]+", x)
-    return [p for p in parts if p]
 # -------------------------
 # Main
 # -------------------------

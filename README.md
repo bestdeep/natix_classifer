@@ -15,6 +15,10 @@ Multi-train dirs, multi-val dirs:
 or
 vit_base+deit_small+swin_small+swin_v2_small+
 python train.py --models=efficientnetv2_s+resnet18+resnet50 --train-dirs="/workspace/hf_extracted_images/train"+"/workspace/hf_extracted_images/test"+"/workspace/synthetic/i2i"+"/workspace/synthetic/t2i" --val-split=0.1 --tb-logdir=tb_logs --pretrained --augment | tee efficientnet_v2_resnet18_50.log
+
+python train_dann.py --models resnet50 --train-dirs /data/real /data/synth --val-split 0.2 --epochs 12 --batch-size 64 --tb-logdir runs --pretrained
+python train_dann.py --models swin_large_patch4_window7_224 --train-dirs "/workspace/hf_extracted_images"+"/workspace/synthetic" --val-split 0.1 --dann --pretrain-epochs 30 --epochs 50 --lambda-domain 1.0 --backbone swin_large_patch4_window7_224 --tb-logdir tb_logs --mixed-precision --pretrained --augment | tee swin_large_patch4_window7_224_roadwalk_classifier.log
+python train_dann.py --models resnet50 efficientnetv2_s convnext_tiny --train-dirs /data/real /data/synth --val-split 0.2 --epochs 12 --tb-logdir runs
 ```
 
 ```bash
