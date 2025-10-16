@@ -24,7 +24,7 @@ class RandomResizedCropWithParams(transforms.RandomResizedCrop):
         super().__init__(*args, **kwargs)
         self.params = None
         self.include_point = include_point
-        print(f"created RRC with point included: {self.include_point}")
+        # print(f"created RRC with point included: {self.include_point}")
 
     def forward(self, img, crop_params=None):
         """

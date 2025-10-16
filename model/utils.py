@@ -184,3 +184,18 @@ def evaluate_ensemble(model_paths: List[str], model_builder, dataloader: DataLoa
         try: roc_auc = roc_auc_score(all_trues, all_probs)
         except: pass
     return {"loss":avg_loss,"accuracy":acc,"precision":float(precision),"recall":float(recall),"f1":float(f1),"roc_auc":float(roc_auc)}
+
+
+class FocalLoss(nn.Module):
+    def __init__(self, weight=None, gamma=2.0, reduction='mean'):
+        super().__init__()
+        self.weight = weight
+        self.gamma = gamma
+        self.reduction = reduction
+        self.ce = nn.CrossEntropyLoss(weight=weight, reduction='none')
+
+    def forward(self, inputs, targets):
+        ce_loss = self.ce(inputs, targets)
+        pt = torch.exp(-ce_loss)
+        focal_loss = ((1 - pt) ** self.gamma) * ce_loss
+        return focal_loss.mean() if self.reduction == 'mean' else focal_loss

@@ -210,8 +210,8 @@ class NatixDataset(Dataset):
         if self.augment:
             # apply_augmentation_by_level expects a numpy array input in your original code.
             # Convert PIL -> numpy
-            np_img = np.array(pil_img)
-            transformed, level, params = apply_augmentation_by_level(np_img, TARGET_IMAGE_SIZE)
+            # np_img = np.array(pil_img)
+            transformed, level, params = apply_augmentation_by_level(pil_img, TARGET_IMAGE_SIZE)
             # `transformed` may be numpy array; let transform handle conversion to tensor if provided
             img_out = transformed
             # optionally attach augmentation info to metadata (not in-place)

@@ -1,6 +1,8 @@
-.pt
+*.pt
 __pycache__/
 .venv/
 env/
 venv/
 *.egg-info/
+tb_logs/
+checkpoints/

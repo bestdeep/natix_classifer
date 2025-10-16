@@ -12,6 +12,9 @@ chmod +x run_train.sh
 Multi-train dirs, multi-val dirs:
 ```bash
 ./scripts/run_train.sh "convnext_small,efficientnet_b3" "/workspace/hf_extracted_images/natix-network-org_roadwork:/workspace/synthetic/i2i:/workspace/synthetic/t2i" 0.1 "checkpoints" "tb_logs" "0,1"
+or
+vit_base+deit_small+swin_small+swin_v2_small+
+python train.py --models=efficientnetv2_s+resnet18+resnet50 --train-dirs="/workspace/hf_extracted_images/train"+"/workspace/hf_extracted_images/test"+"/workspace/synthetic/i2i"+"/workspace/synthetic/t2i" --val-split=0.1 --tb-logdir=tb_logs --pretrained --augment | tee efficientnet_v2_resnet18_50.log
 ```
 
 ```bash

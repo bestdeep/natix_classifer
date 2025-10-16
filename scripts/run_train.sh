@@ -15,7 +15,7 @@ OUTPUT_DIR="${4:-checkpoints}"
 TB_LOGDIR="${5:-tb_logs}"
 CUDA_DEVICES="${6:-0}"     # e.g. "0" or "0,1"
 EPOCHS="${EPOCHS:-20}"
-BATCH_SIZE="${BATCH_SIZE:-32}"
+BATCH_SIZE="${BATCH_SIZE:-64}"
 LR="${LR:-3e-4}"
 IMAGE_SIZE="${IMAGE_SIZE:-224}"
 NUM_WORKERS="${NUM_WORKERS:-4}"
@@ -30,7 +30,6 @@ REAL_ONLY_VAL_FLAG="${REAL_ONLY_VAL_FLAG:-}"  # set to "--real-only-val" to enab
 IS_SYNTHETIC_KEY="${IS_SYNTHETIC_KEY:-is_synthetic}"
 LOG_EVERY_STEPS="${LOG_EVERY_STEPS:-50}"
 LOG_IMAGE_COUNT="${LOG_IMAGE_COUNT:-16}"
-WARMUP_EPOCHS="${WARMUP_EPOCHS:-2}"
 
 if [ -z "$MODELS" ] || [ -z "$TRAIN_DIRS" ]; then
   echo "Usage: $0 <models(comma-separated)> <train_dirs(colon-separated)> [val_split] [output_dir] [tb_logdir] [cuda_devices]"
@@ -78,7 +77,6 @@ python train.py \
   --tb-logdir "${TB_LOGDIR}" \
   --log-every-steps "${LOG_EVERY_STEPS}" \
   --log-image-count "${LOG_IMAGE_COUNT}" \
-  --warmup-epochs "${WARMUP_EPOCHS}" \
   ${REAL_ONLY_VAL_FLAG} \
   --is-synthetic-key "${IS_SYNTHETIC_KEY}"
 
