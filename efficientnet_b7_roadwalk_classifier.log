@@ -1,0 +1,6 @@
+Using device: cuda
+Training directories: ['/workspace/hf_extracted_images', '/workspace/synthetic']
+Models to train: ['efficientnet_b7']
+Total samples: 21919, Train: 19727, Val: 2192
+
+=== Training model: efficientnet_b7 ===

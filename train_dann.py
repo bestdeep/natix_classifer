@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 from torch.utils.tensorboard import SummaryWriter
-from torch.cuda.amp import autocast, GradScaler
+from torch.amp import autocast, GradScaler
 import torchvision.transforms as T
 
 # user project imports (assumed present)
@@ -118,7 +118,7 @@ def train_epoch_dann(
 
         # Mixup/CutMix still supported for DANN if desired (optional)
         # Here we keep simple: no MixUp/CutMix in DANN stage to avoid domain label confusion.
-        with autocast():
+        with autocast(device_type="cuda"):
             out = model(imgs)
             # expect (class_logits, domain_logits) for DANN model
             if isinstance(out, tuple) and len(out) >= 2:
@@ -205,7 +205,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     criterion = FocalLoss(weight=None, gamma=2.0, reduction="mean")
-    scaler = GradScaler(enabled=args.mixed_precision)
+    scaler = GradScaler("cuda", enabled=args.mixed_precision)
 
     # DataLoaders: Subset objects may be passed (your main script uses Subset)
     train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn, num_workers=args.num_workers, pin_memory=True)
@@ -253,10 +253,18 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
             val_metrics = evaluate(model, val_loader, device, num_classes=num_classes)
             print(f"[DANN pretrain {epoch+1}/{args.pretrain_epochs}] train_f1={dann_metrics.get('f1',0):.4f} train_loss={dann_metrics['loss']:.4f} | val_acc={val_metrics['accuracy']:.4f} val_loss={val_metrics['loss']:.4f}")
             # TB log
-            if writer:
-                writer.add_scalar("pretrain/train_loss", dann_metrics["loss"], epoch)
-                writer.add_scalar("pretrain/val_loss", val_metrics["loss"], epoch)
-                writer.add_scalar("pretrain/val_acc", val_metrics["accuracy"], epoch)
+            writer.add_scalar("pretrain/train_f1", dann_metrics.get("f1", 0), epoch)
+            writer.add_scalar("pretrain/train_acc", dann_metrics.get("accuracy", 0), epoch)
+            writer.add_scalar("pretrain/train_prec", dann_metrics.get("precision", 0), epoch)
+            writer.add_scalar("pretrain/train_rec", dann_metrics.get("recall", 0), epoch)
+            writer.add_scalar("pretrain/train_auc", dann_metrics.get("auc", 0), epoch)
+            writer.add_scalar("pretrain/train_loss", dann_metrics["loss"], epoch)
+            
+            writer.add_scalar("pretrain/val_f1", val_metrics["f1"], epoch)
+            writer.add_scalar("pretrain/val_prec", val_metrics["precision"], epoch)
+            writer.add_scalar("pretrain/val_rec", val_metrics["recall"], epoch)
+            writer.add_scalar("pretrain/val_loss", val_metrics["loss"], epoch)
+            writer.add_scalar("pretrain/val_acc", val_metrics["accuracy"], epoch)
             # save last
             torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, os.path.join(args.output_dir, model_name + "_last.pth"))
             # save best by val f1 (or val acc depending on arg)
@@ -273,6 +281,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
 
     # ---------- Supervised training (or if not DANN: full supervised) ----------
     print("Starting supervised training for", args.epochs, "epochs")
+    best_val_acc = 0.0
     for epoch in range(args.epochs):
         model.train()
         loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{args.epochs}", ncols=100)
@@ -298,7 +307,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
                 lam = 1.0
 
             optimizer.zero_grad()
-            with autocast(enabled=args.mixed_precision):
+            with autocast(device_type="cuda", enabled=args.mixed_precision):
                 out = model(imgs)
                 # model returns either logits or (logits, ...) in case DANN
                 if isinstance(out, tuple):
@@ -334,9 +343,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
         scheduler.step()
 
         # validation
-        val_metrics = evaluate(model, val_loader, device, num_classes=num_classes)
-        print(f"[Epoch {epoch+1}/{args.epochs}] Train Acc: {train_acc:.4f}, Loss: {train_loss:.4f} | Val Acc: {val_metrics['accuracy']:.4f}, Loss: {val_metrics['loss']:.4f}")
-
+        val_metrics = evaluate(model, val_loader, device, num_classes=num_classes)        
         # tensorboard logging
         if writer:
             writer.add_scalar("train/epoch_loss", train_loss, epoch)
@@ -361,8 +368,11 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
         # save last
         torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, os.path.join(args.output_dir, model_name + "_last.pth"))
 
-        if val_metrics["accuracy"] > best_val_acc:
-            best_val_acc = val_metrics["accuracy"]
+        total_acc = (val_metrics["accuracy"] + train_acc) / 2.0
+        print(f"[Epoch {epoch+1}/{args.epochs}] Train Acc: {train_acc:.4f}, Loss: {train_loss:.4f} | Val Acc: {val_metrics['accuracy']:.4f}, Loss: {val_metrics['loss']:.4f} Total Acc: {total_acc:.4f}")
+
+        if total_acc > best_val_acc:
+            best_val_acc = total_acc
             torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, best_ckpt_path)
             print("Saved new best checkpoint ->", best_ckpt_path)
 

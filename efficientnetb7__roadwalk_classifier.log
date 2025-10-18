@@ -1,0 +1,102 @@
+Using device: cuda
+Training directories: ['/workspace/hf_extracted_images', '/workspace/synthetic']
+Models to train: ['efficientnetb7']
+Total samples: 21919, Train: 19727, Val: 2192
+
+=== Training model: efficientnetb7 ===
+TensorBoard logs -> tb_logs/efficientnetb7_20251017_223730
+Starting DANN pretraining for 10 epochs
+[DANN pretrain 1/10] train_f1=0.5374 train_loss=0.7721 | val_acc=0.5100 val_loss=0.6960
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 2/10] train_f1=0.5593 train_loss=0.7660 | val_acc=0.5470 val_loss=0.6886
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 3/10] train_f1=0.5836 train_loss=0.7596 | val_acc=0.5753 val_loss=0.6827
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 4/10] train_f1=0.6050 train_loss=0.7542 | val_acc=0.5684 val_loss=0.6793
+[DANN pretrain 5/10] train_f1=0.6219 train_loss=0.7497 | val_acc=0.6099 val_loss=0.6719
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 6/10] train_f1=0.6416 train_loss=0.7440 | val_acc=0.6501 val_loss=0.6653
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 7/10] train_f1=0.6528 train_loss=0.7398 | val_acc=0.6533 val_loss=0.6630
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 8/10] train_f1=0.6745 train_loss=0.7359 | val_acc=0.6578 val_loss=0.6602
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 9/10] train_f1=0.6848 train_loss=0.7298 | val_acc=0.6829 val_loss=0.6534
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+[DANN pretrain 10/10] train_f1=0.6984 train_loss=0.7252 | val_acc=0.6916 val_loss=0.6471
+Saved best pretrain checkpoint -> checkpoints/efficientnetb7_best.pth
+Starting supervised training for 50 epochs
+[Epoch 1/50] Train Acc: 0.6367, Loss: 0.1613 | Val Acc: 0.6925, Loss: 0.6482 Total Acc: 0.6646
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 2/50] Train Acc: 0.6349, Loss: 0.1611 | Val Acc: 0.6984, Loss: 0.6459 Total Acc: 0.6667
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 3/50] Train Acc: 0.6336, Loss: 0.1611 | Val Acc: 0.7007, Loss: 0.6457 Total Acc: 0.6672
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 4/50] Train Acc: 0.6408, Loss: 0.1595 | Val Acc: 0.7003, Loss: 0.6482 Total Acc: 0.6706
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 5/50] Train Acc: 0.6394, Loss: 0.1609 | Val Acc: 0.6975, Loss: 0.6479 Total Acc: 0.6685
+[Epoch 6/50] Train Acc: 0.6452, Loss: 0.1602 | Val Acc: 0.6911, Loss: 0.6486 Total Acc: 0.6682
+[Epoch 7/50] Train Acc: 0.6407, Loss: 0.1609 | Val Acc: 0.7021, Loss: 0.6466 Total Acc: 0.6714
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 8/50] Train Acc: 0.6321, Loss: 0.1610 | Val Acc: 0.6911, Loss: 0.6470 Total Acc: 0.6616
+[Epoch 9/50] Train Acc: 0.6446, Loss: 0.1595 | Val Acc: 0.7126, Loss: 0.6443 Total Acc: 0.6786
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 10/50] Train Acc: 0.6432, Loss: 0.1600 | Val Acc: 0.6966, Loss: 0.6467 Total Acc: 0.6699
+[Epoch 11/50] Train Acc: 0.6425, Loss: 0.1603 | Val Acc: 0.6998, Loss: 0.6461 Total Acc: 0.6711
+[Epoch 12/50] Train Acc: 0.6474, Loss: 0.1597 | Val Acc: 0.7080, Loss: 0.6443 Total Acc: 0.6777
+[Epoch 13/50] Train Acc: 0.6442, Loss: 0.1595 | Val Acc: 0.6971, Loss: 0.6431 Total Acc: 0.6707
+[Epoch 14/50] Train Acc: 0.6445, Loss: 0.1593 | Val Acc: 0.7053, Loss: 0.6436 Total Acc: 0.6749
+[Epoch 15/50] Train Acc: 0.6479, Loss: 0.1585 | Val Acc: 0.7126, Loss: 0.6402 Total Acc: 0.6803
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 16/50] Train Acc: 0.6418, Loss: 0.1590 | Val Acc: 0.7158, Loss: 0.6420 Total Acc: 0.6788
+[Epoch 17/50] Train Acc: 0.6560, Loss: 0.1578 | Val Acc: 0.7199, Loss: 0.6372 Total Acc: 0.6879
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 18/50] Train Acc: 0.6608, Loss: 0.1563 | Val Acc: 0.7194, Loss: 0.6402 Total Acc: 0.6901
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 19/50] Train Acc: 0.6616, Loss: 0.1561 | Val Acc: 0.7267, Loss: 0.6369 Total Acc: 0.6942
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 20/50] Train Acc: 0.6594, Loss: 0.1559 | Val Acc: 0.7304, Loss: 0.6374 Total Acc: 0.6949
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 21/50] Train Acc: 0.6621, Loss: 0.1553 | Val Acc: 0.7199, Loss: 0.6375 Total Acc: 0.6910
+[Epoch 22/50] Train Acc: 0.6673, Loss: 0.1545 | Val Acc: 0.7240, Loss: 0.6350 Total Acc: 0.6957
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 23/50] Train Acc: 0.6703, Loss: 0.1542 | Val Acc: 0.7340, Loss: 0.6297 Total Acc: 0.7022
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 24/50] Train Acc: 0.6697, Loss: 0.1542 | Val Acc: 0.7276, Loss: 0.6304 Total Acc: 0.6987
+[Epoch 25/50] Train Acc: 0.6818, Loss: 0.1520 | Val Acc: 0.7432, Loss: 0.6268 Total Acc: 0.7125
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 26/50] Train Acc: 0.6760, Loss: 0.1526 | Val Acc: 0.7318, Loss: 0.6269 Total Acc: 0.7039
+[Epoch 27/50] Train Acc: 0.6811, Loss: 0.1520 | Val Acc: 0.7491, Loss: 0.6234 Total Acc: 0.7151
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 28/50] Train Acc: 0.6869, Loss: 0.1504 | Val Acc: 0.7363, Loss: 0.6236 Total Acc: 0.7116
+[Epoch 29/50] Train Acc: 0.6860, Loss: 0.1513 | Val Acc: 0.7514, Loss: 0.6215 Total Acc: 0.7187
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 30/50] Train Acc: 0.6890, Loss: 0.1506 | Val Acc: 0.7500, Loss: 0.6212 Total Acc: 0.7195
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 31/50] Train Acc: 0.6872, Loss: 0.1503 | Val Acc: 0.7536, Loss: 0.6206 Total Acc: 0.7204
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 32/50] Train Acc: 0.6911, Loss: 0.1495 | Val Acc: 0.7441, Loss: 0.6204 Total Acc: 0.7176
+[Epoch 33/50] Train Acc: 0.6949, Loss: 0.1492 | Val Acc: 0.7655, Loss: 0.6173 Total Acc: 0.7302
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 34/50] Train Acc: 0.6951, Loss: 0.1487 | Val Acc: 0.7655, Loss: 0.6164 Total Acc: 0.7303
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 35/50] Train Acc: 0.6946, Loss: 0.1487 | Val Acc: 0.7436, Loss: 0.6157 Total Acc: 0.7191
+[Epoch 36/50] Train Acc: 0.6944, Loss: 0.1486 | Val Acc: 0.7682, Loss: 0.6164 Total Acc: 0.7313
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 37/50] Train Acc: 0.6941, Loss: 0.1483 | Val Acc: 0.7673, Loss: 0.6145 Total Acc: 0.7307
+[Epoch 38/50] Train Acc: 0.6937, Loss: 0.1487 | Val Acc: 0.7523, Loss: 0.6165 Total Acc: 0.7230
+[Epoch 39/50] Train Acc: 0.7082, Loss: 0.1458 | Val Acc: 0.7527, Loss: 0.6167 Total Acc: 0.7305
+[Epoch 40/50] Train Acc: 0.7020, Loss: 0.1463 | Val Acc: 0.7673, Loss: 0.6118 Total Acc: 0.7347
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 41/50] Train Acc: 0.6999, Loss: 0.1468 | Val Acc: 0.7755, Loss: 0.6104 Total Acc: 0.7377
+Saved new best checkpoint -> checkpoints/efficientnetb7_best.pth
+[Epoch 42/50] Train Acc: 0.6980, Loss: 0.1469 | Val Acc: 0.7669, Loss: 0.6128 Total Acc: 0.7325
+[Epoch 43/50] Train Acc: 0.7019, Loss: 0.1472 | Val Acc: 0.7555, Loss: 0.6152 Total Acc: 0.7287
+[Epoch 44/50] Train Acc: 0.7059, Loss: 0.1460 | Val Acc: 0.7527, Loss: 0.6154 Total Acc: 0.7293
+[Epoch 45/50] Train Acc: 0.6988, Loss: 0.1473 | Val Acc: 0.7555, Loss: 0.6140 Total Acc: 0.7271
+[Epoch 46/50] Train Acc: 0.7020, Loss: 0.1472 | Val Acc: 0.7682, Loss: 0.6143 Total Acc: 0.7351
+[Epoch 47/50] Train Acc: 0.7018, Loss: 0.1472 | Val Acc: 0.7628, Loss: 0.6108 Total Acc: 0.7323
+[Epoch 48/50] Train Acc: 0.6974, Loss: 0.1478 | Val Acc: 0.7714, Loss: 0.6134 Total Acc: 0.7344
+[Epoch 49/50] Train Acc: 0.7010, Loss: 0.1473 | Val Acc: 0.7632, Loss: 0.6148 Total Acc: 0.7321
+[Epoch 50/50] Train Acc: 0.7018, Loss: 0.1468 | Val Acc: 0.7678, Loss: 0.6095 Total Acc: 0.7348
+Model efficientnetb7 best checkpoint saved at: checkpoints/efficientnetb7_best.pth

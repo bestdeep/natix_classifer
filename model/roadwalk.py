@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import timm
+import torchvision.models as models
 
 # ---------------------------
 # Gradient Reversal Layer (for DANN)
@@ -97,14 +98,21 @@ class RoadworkClassifier(nn.Module):
         # Create timm feature extractor: num_classes=0 returns features before final head
         # global_pool='avg' ensures a fixed vector per image
         self.backbone_name = backbone_name
-        self.feature_extractor = timm.create_model(
-            backbone_name, pretrained=pretrained, num_classes=0, global_pool="avg"
-        )
-        # timm models expose num_features
-        if not hasattr(self.feature_extractor, "num_features"):
-            raise ValueError(f"Backbone {backbone_name} does not expose `num_features`.")
-        feat_dim = int(self.feature_extractor.num_features)
-
+        try:
+            self.feature_extractor = timm.create_model(
+                backbone_name, pretrained=pretrained, num_classes=0, global_pool="avg"
+            )
+            # timm models expose num_features
+            if not hasattr(self.feature_extractor, "num_features"):
+                raise ValueError(f"Backbone {backbone_name} does not expose `num_features`.")
+            feat_dim = int(self.feature_extractor.num_features)
+        except Exception as e:
+            self.feature_extractor_backbone = models.efficientnet_b7(pretrained=pretrained)
+            feat_dim = self.feature_extractor_backbone.classifier[1].in_features
+            self.feature_extractor_backbone.classifier = torch.nn.Identity()
+            self.feature_extractor = self.feature_extractor_backbone
+        
+        
         self.classifier = ClassifierHead(in_features=feat_dim, hidden=head_hidden, dropout=dropout, num_classes=num_classes)
 
         # Domain adaptation components

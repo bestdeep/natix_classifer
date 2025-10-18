@@ -1,0 +1,82 @@
+Using device: cuda
+Training directories: ['/workspace/hf_extracted_images', '/workspace/synthetic']
+Models to train: ['swin_large_patch4_window7_224']
+Total samples: 21919, Train: 19727, Val: 2192
+
+=== Training model: swin_large_patch4_window7_224 ===
+TensorBoard logs -> tb_logs/swin_large_patch4_window7_224_20251017_061420
+Resuming training from checkpoint: checkpoints/swin_large_patch4_window7_224_best.pth
+Starting DANN pretraining for 10 epochs
+[DANN pretrain 1/10] train_f1=0.9988 train_loss=0.2110 | val_acc=0.9453 val_loss=0.2368
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 2/10] train_f1=0.9990 train_loss=0.2075 | val_acc=0.9471 val_loss=0.2434
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 3/10] train_f1=0.9952 train_loss=0.2200 | val_acc=0.9398 val_loss=0.2463
+[DANN pretrain 4/10] train_f1=0.9943 train_loss=0.2200 | val_acc=0.9430 val_loss=0.2327
+[DANN pretrain 5/10] train_f1=0.9960 train_loss=0.2152 | val_acc=0.9480 val_loss=0.2074
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 6/10] train_f1=0.9951 train_loss=0.2156 | val_acc=0.9425 val_loss=0.2193
+[DANN pretrain 7/10] train_f1=0.9958 train_loss=0.2143 | val_acc=0.9494 val_loss=0.2123
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[DANN pretrain 8/10] train_f1=0.9961 train_loss=0.2129 | val_acc=0.9398 val_loss=0.2464
+[DANN pretrain 9/10] train_f1=0.9967 train_loss=0.2110 | val_acc=0.9448 val_loss=0.2411
+[DANN pretrain 10/10] train_f1=0.9967 train_loss=0.2115 | val_acc=0.9498 val_loss=0.2165
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+Starting supervised training for 50 epochs
+[Epoch 1/50] Train Acc: 0.9584, Loss: 0.0733 | Val Acc: 0.9453, Loss: 0.2112 Total Acc: 0.9518
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 2/50] Train Acc: 0.9573, Loss: 0.0481 | Val Acc: 0.9494, Loss: 0.1796 Total Acc: 0.9533
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 3/50] Train Acc: 0.9567, Loss: 0.0404 | Val Acc: 0.9434, Loss: 0.1789 Total Acc: 0.9500
+[Epoch 4/50] Train Acc: 0.9664, Loss: 0.0334 | Val Acc: 0.9416, Loss: 0.1808 Total Acc: 0.9540
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 5/50] Train Acc: 0.9536, Loss: 0.0387 | Val Acc: 0.9453, Loss: 0.1676 Total Acc: 0.9494
+[Epoch 6/50] Train Acc: 0.9501, Loss: 0.0351 | Val Acc: 0.9480, Loss: 0.1584 Total Acc: 0.9491
+[Epoch 7/50] Train Acc: 0.9571, Loss: 0.0312 | Val Acc: 0.9448, Loss: 0.1609 Total Acc: 0.9509
+[Epoch 8/50] Train Acc: 0.9648, Loss: 0.0285 | Val Acc: 0.9471, Loss: 0.1544 Total Acc: 0.9559
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 9/50] Train Acc: 0.9563, Loss: 0.0322 | Val Acc: 0.9475, Loss: 0.1572 Total Acc: 0.9519
+[Epoch 10/50] Train Acc: 0.9710, Loss: 0.0246 | Val Acc: 0.9439, Loss: 0.1655 Total Acc: 0.9574
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 11/50] Train Acc: 0.9538, Loss: 0.0318 | Val Acc: 0.9466, Loss: 0.1710 Total Acc: 0.9502
+[Epoch 12/50] Train Acc: 0.9534, Loss: 0.0298 | Val Acc: 0.9439, Loss: 0.1738 Total Acc: 0.9486
+[Epoch 13/50] Train Acc: 0.9545, Loss: 0.0306 | Val Acc: 0.9448, Loss: 0.1810 Total Acc: 0.9496
+[Epoch 14/50] Train Acc: 0.9644, Loss: 0.0292 | Val Acc: 0.9434, Loss: 0.1585 Total Acc: 0.9539
+[Epoch 15/50] Train Acc: 0.9549, Loss: 0.0311 | Val Acc: 0.9480, Loss: 0.1587 Total Acc: 0.9514
+[Epoch 16/50] Train Acc: 0.9613, Loss: 0.0310 | Val Acc: 0.9484, Loss: 0.1584 Total Acc: 0.9549
+[Epoch 17/50] Train Acc: 0.9544, Loss: 0.0304 | Val Acc: 0.9489, Loss: 0.1653 Total Acc: 0.9517
+[Epoch 18/50] Train Acc: 0.9572, Loss: 0.0313 | Val Acc: 0.9457, Loss: 0.1704 Total Acc: 0.9514
+[Epoch 19/50] Train Acc: 0.9695, Loss: 0.0242 | Val Acc: 0.9471, Loss: 0.1606 Total Acc: 0.9583
+Saved new best checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+[Epoch 20/50] Train Acc: 0.9593, Loss: 0.0279 | Val Acc: 0.9453, Loss: 0.1711 Total Acc: 0.9523
+[Epoch 21/50] Train Acc: 0.9635, Loss: 0.0277 | Val Acc: 0.9480, Loss: 0.1789 Total Acc: 0.9557
+[Epoch 22/50] Train Acc: 0.9623, Loss: 0.0263 | Val Acc: 0.9471, Loss: 0.1683 Total Acc: 0.9547
+[Epoch 23/50] Train Acc: 0.9660, Loss: 0.0268 | Val Acc: 0.9416, Loss: 0.1764 Total Acc: 0.9538
+[Epoch 24/50] Train Acc: 0.9534, Loss: 0.0298 | Val Acc: 0.9407, Loss: 0.1692 Total Acc: 0.9471
+[Epoch 25/50] Train Acc: 0.9641, Loss: 0.0266 | Val Acc: 0.9453, Loss: 0.1788 Total Acc: 0.9547
+[Epoch 26/50] Train Acc: 0.9596, Loss: 0.0301 | Val Acc: 0.9439, Loss: 0.1664 Total Acc: 0.9518
+[Epoch 27/50] Train Acc: 0.9603, Loss: 0.0289 | Val Acc: 0.9453, Loss: 0.1747 Total Acc: 0.9528
+[Epoch 28/50] Train Acc: 0.9601, Loss: 0.0278 | Val Acc: 0.9453, Loss: 0.1754 Total Acc: 0.9527
+[Epoch 29/50] Train Acc: 0.9520, Loss: 0.0312 | Val Acc: 0.9434, Loss: 0.1852 Total Acc: 0.9477
+[Epoch 30/50] Train Acc: 0.9534, Loss: 0.0307 | Val Acc: 0.9407, Loss: 0.1820 Total Acc: 0.9470
+[Epoch 31/50] Train Acc: 0.9598, Loss: 0.0290 | Val Acc: 0.9430, Loss: 0.1711 Total Acc: 0.9514
+[Epoch 32/50] Train Acc: 0.9604, Loss: 0.0285 | Val Acc: 0.9457, Loss: 0.1695 Total Acc: 0.9531
+[Epoch 33/50] Train Acc: 0.9579, Loss: 0.0282 | Val Acc: 0.9471, Loss: 0.1848 Total Acc: 0.9525
+[Epoch 34/50] Train Acc: 0.9633, Loss: 0.0285 | Val Acc: 0.9448, Loss: 0.1743 Total Acc: 0.9541
+[Epoch 35/50] Train Acc: 0.9611, Loss: 0.0274 | Val Acc: 0.9462, Loss: 0.1726 Total Acc: 0.9536
+[Epoch 36/50] Train Acc: 0.9583, Loss: 0.0282 | Val Acc: 0.9407, Loss: 0.1744 Total Acc: 0.9495
+[Epoch 37/50] Train Acc: 0.9540, Loss: 0.0311 | Val Acc: 0.9439, Loss: 0.1859 Total Acc: 0.9489
+[Epoch 38/50] Train Acc: 0.9636, Loss: 0.0279 | Val Acc: 0.9526, Loss: 0.1641 Total Acc: 0.9581
+[Epoch 39/50] Train Acc: 0.9626, Loss: 0.0264 | Val Acc: 0.9521, Loss: 0.1602 Total Acc: 0.9573
+[Epoch 40/50] Train Acc: 0.9555, Loss: 0.0274 | Val Acc: 0.9448, Loss: 0.1736 Total Acc: 0.9502
+[Epoch 41/50] Train Acc: 0.9682, Loss: 0.0231 | Val Acc: 0.9439, Loss: 0.1660 Total Acc: 0.9560
+[Epoch 42/50] Train Acc: 0.9614, Loss: 0.0259 | Val Acc: 0.9443, Loss: 0.1657 Total Acc: 0.9529
+[Epoch 43/50] Train Acc: 0.9589, Loss: 0.0299 | Val Acc: 0.9439, Loss: 0.2055 Total Acc: 0.9514
+[Epoch 44/50] Train Acc: 0.9651, Loss: 0.0265 | Val Acc: 0.9466, Loss: 0.1894 Total Acc: 0.9558
+[Epoch 45/50] Train Acc: 0.9619, Loss: 0.0269 | Val Acc: 0.9466, Loss: 0.1722 Total Acc: 0.9543
+[Epoch 46/50] Train Acc: 0.9611, Loss: 0.0273 | Val Acc: 0.9466, Loss: 0.1568 Total Acc: 0.9538
+[Epoch 47/50] Train Acc: 0.9623, Loss: 0.0272 | Val Acc: 0.9462, Loss: 0.1740 Total Acc: 0.9543
+[Epoch 48/50] Train Acc: 0.9522, Loss: 0.0293 | Val Acc: 0.9421, Loss: 0.1631 Total Acc: 0.9472
+[Epoch 49/50] Train Acc: 0.9580, Loss: 0.0300 | Val Acc: 0.9489, Loss: 0.1647 Total Acc: 0.9535
+[Epoch 50/50] Train Acc: 0.9651, Loss: 0.0283 | Val Acc: 0.9443, Loss: 0.1721 Total Acc: 0.9547
+Model swin_large_patch4_window7_224 best checkpoint saved at: checkpoints/swin_large_patch4_window7_224_best.pth

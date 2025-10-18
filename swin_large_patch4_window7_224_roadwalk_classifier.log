@@ -41,3 +41,17 @@ Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best
 [DANN pretrain 27/30] train_f1=0.9601 train_loss=0.7979 | val_acc=0.9174 val_loss=0.2387
 [DANN pretrain 28/30] train_f1=0.9617 train_loss=0.7932 | val_acc=0.9279 val_loss=0.1905
 [DANN pretrain 29/30] train_f1=0.9641 train_loss=0.7839 | val_acc=0.9115 val_loss=0.2496
+[DANN pretrain 30/30] train_f1=0.9637 train_loss=0.7897 | val_acc=0.9334 val_loss=0.2180
+Saved best pretrain checkpoint -> checkpoints/swin_large_patch4_window7_224_best.pth
+Starting supervised training for 50 epochs
+[Epoch 1/50] Train Acc: 0.8254, Loss: 0.0866 | Val Acc: 0.9348, Loss: 0.3487
+[Epoch 2/50] Train Acc: 0.8334, Loss: 0.0714 | Val Acc: 0.9361, Loss: 0.3624
+[Epoch 3/50] Train Acc: 0.8310, Loss: 0.0699 | Val Acc: 0.9361, Loss: 0.3156
+[Epoch 4/50] Train Acc: 0.8212, Loss: 0.0671 | Val Acc: 0.9407, Loss: 0.3156
+[Epoch 5/50] Train Acc: 0.8348, Loss: 0.0698 | Val Acc: 0.9416, Loss: 0.3051
+[Epoch 6/50] Train Acc: 0.8223, Loss: 0.0669 | Val Acc: 0.9348, Loss: 0.3409
+[Epoch 7/50] Train Acc: 0.8172, Loss: 0.0667 | Val Acc: 0.9311, Loss: 0.3698
+[Epoch 8/50] Train Acc: 0.8237, Loss: 0.0665 | Val Acc: 0.9398, Loss: 0.2682
+[Epoch 9/50] Train Acc: 0.8119, Loss: 0.0666 | Val Acc: 0.9320, Loss: 0.2911
+[Epoch 10/50] Train Acc: 0.8210, Loss: 0.0663 | Val Acc: 0.9366, Loss: 0.2701
+[Epoch 11/50] Train Acc: 0.8169, Loss: 0.0670 | Val Acc: 0.9284, Loss: 0.3459
