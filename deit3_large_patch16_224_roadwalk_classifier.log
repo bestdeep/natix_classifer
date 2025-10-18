@@ -70,3 +70,4 @@ Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
 [Epoch 11/50] Train Acc: 0.8834, Loss: 0.1136 | Val Acc: 0.8992, Loss: 0.2593 Total Acc: 0.8913
 [Epoch 12/50] Train Acc: 0.8874, Loss: 0.1077 | Val Acc: 0.9074, Loss: 0.2595 Total Acc: 0.8974
 Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
+[Epoch 13/50] Train Acc: 0.8785, Loss: 0.1125 | Val Acc: 0.9001, Loss: 0.2602 Total Acc: 0.8893
