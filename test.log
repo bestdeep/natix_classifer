@@ -1,0 +1,2 @@
+Model loaded in 2.70 seconds.
+Test results: {'accuracy': 0.985628906428213, 'precision': 0.9894519436453493, 'recall': 0.9873399087295746, 'f1': 0.9883947979221162, 'roc_auc': 0.9979176570271998}

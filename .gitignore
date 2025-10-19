@@ -6,3 +6,4 @@ env/
 venv/
 *.egg-info/
 tb_logs/
+*.png
