@@ -1,0 +1,12 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: convnext_large
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: convnext_large ===
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/convnext_large_20251022_161631
+Starting DANN pretraining for 8 epochs

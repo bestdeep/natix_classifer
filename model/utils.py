@@ -1,10 +1,9 @@
 import numpy as np
 import random
-from typing import List, Any
+from typing import List, Any, Optional
 from PIL import Image
 import torch
 import torchvision.transforms as T
-from datasets.natix_dataset import NatixDataset
 import torch.nn as nn
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 from PIL import Image
@@ -105,13 +104,26 @@ def collate_fn(batch):
     labels_t = torch.tensor(labels, dtype=torch.long)
     return imgs, labels_t, paths
 
-def filter_real_only_indices(dataset: NatixDataset, is_synthetic_key: str="is_synthetic") -> List[int]:
-    idxs = []
-    for i in range(len(dataset)):
-        meta = dataset._get_metadata(i)
-        val = meta.get(is_synthetic_key,None)
-        if val is None or not bool(val): idxs.append(i)
-    return idxs
+def collate_fn_multi(batch):
+    """
+    Batch is list of tuples: (images_k, label_idx, meta, path, domain)
+     - images_k: (K, C, H, W)
+    Returns:
+      images: Tensor (B, K, C, H, W)
+      labels: LongTensor (B,)
+      paths: list[str]
+      domains: LongTensor (B,)  (0 real, 1 synthetic)
+    """
+    images_k = [item[0] for item in batch]  # each is (K,C,H,W)
+    labels = [(-1 if item[1] is None else int(item[1])) for item in batch]
+    paths = [item[2] for item in batch]
+    domains = [int(item[3]) for item in batch]
+
+    images_stack = torch.stack(images_k, dim=0)  # shape (B, K, C, H, W)
+    labels_t = torch.tensor(labels, dtype=torch.long)
+    domains_t = torch.tensor(domains, dtype=torch.long)
+
+    return images_stack, labels_t, paths, domains_t
 
 # -------------------------
 # Evaluation
@@ -243,6 +255,31 @@ def normalize_arg_list(x):
     # split on comma, plus, colon or whitespace
     parts = re.split(r"[,\+: \t]+", x)
     return [p for p in parts if p]
+
+# -------------------------
+# Helpers
+# -------------------------
+def infer_domain_from_path(path: str, synthetic_indicators: Optional[List[str]] = None) -> int:
+    """
+    Heuristic: 0 -> real, 1 -> synthetic
+    Checks keys (is_synthetic, domain) then path substrings
+    """
+    p = (path or "").lower()
+    if not synthetic_indicators:
+        synthetic_indicators = ("synthetic", "synth", "ai_", "t2i", "i2i", "generated", "fake")
+    for s in synthetic_indicators:
+        if s.lower() in p:
+            return 1
+    return 0
+
+def ensure_tensor_labels(labels):
+    """Return torch.LongTensor labels; -1 for missing"""
+    if isinstance(labels, torch.Tensor):
+        if labels.dtype != torch.long:
+            return labels.long()
+        return labels
+    # assume list-like
+    return torch.tensor([(-1 if l is None else int(l)) for l in labels], dtype=torch.long)
 
 class FocalLoss(nn.Module):
     def __init__(self, weight=None, gamma=2.0, reduction='mean'):
