@@ -4,7 +4,6 @@ import argparse
 import random
 from datetime import datetime
 from typing import List, Optional
-import json
 
 import numpy as np
 from tqdm import tqdm
@@ -12,10 +11,10 @@ from tqdm import tqdm
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torch.amp import autocast, GradScaler
-import torchvision.transforms as T
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 
 # user project imports (assumed present)
 from model.backbone import get_backbone_builder
@@ -31,41 +30,23 @@ from model.utils import (
     filter_real_only_indices,
     evaluate,
     evaluate_ensemble,
-    normalize_arg_list,
     FocalLoss,
 )
 from model.roadwalk import RoadworkClassifier
 
-# Optional DANN model (only imported if --dann)
-# from models.custom_model import RoadworkClassifier  <-- imported lazily when needed
-
 # -------------------------
 # Helpers
 # -------------------------
-def infer_domain_from_meta_or_path(meta: dict, path: str, synthetic_indicators: Optional[List[str]] = None) -> int:
+def infer_domain_from_path(path: str, synthetic_indicators: Optional[List[str]] = None) -> int:
     """
     Heuristic: 0 -> real, 1 -> synthetic
-    Checks meta keys (is_synthetic, domain) then path substrings
+    Checks keys (is_synthetic, domain) then path substrings
     """
-    if meta is None:
-        meta = {}
-    v = meta.get("is_synthetic")
-    if isinstance(v, bool):
-        return 1 if v else 0
-    dom = meta.get("domain")
-    if isinstance(dom, str):
-        d = dom.lower()
-        if "synth" in d or "synthetic" in d:
-            return 1
-        if "real" in d:
-            return 0
     p = (path or "").lower()
-    if synthetic_indicators:
-        for s in synthetic_indicators:
-            if s.lower() in p:
-                return 1
-    for s in ("synthetic", "synth", "ai_", "t2i", "i2i", "generated", "fake"):
-        if s in p:
+    if not synthetic_indicators:
+        synthetic_indicators = ("synthetic", "synth", "ai_", "t2i", "i2i", "generated", "fake")
+    for s in synthetic_indicators:
+        if s.lower() in p:
             return 1
     return 0
 
@@ -92,7 +73,6 @@ def train_epoch_dann(
     lambda_domain_weight: float,
     synthetic_indicators: List[str],
     tb_writer: Optional[SummaryWriter],
-    epoch_idx: int,
 ):
     model.train()
     criterion_cls = nn.CrossEntropyLoss()
@@ -101,13 +81,13 @@ def train_epoch_dann(
     y_true, y_pred, y_scores = [], [], []
     pbar = tqdm(loader, desc=f"DANN-train", leave=False)
     for step, batch in enumerate(pbar):
-        imgs, labels, metas, paths = batch
+        imgs, labels, paths = batch
         imgs = imgs.to(device)
         labels = ensure_tensor_labels(labels).to(device)
         mask = labels >= 0
 
         # domain labels
-        domain_labels = [infer_domain_from_meta_or_path(m, p, synthetic_indicators) for m, p in zip(metas, paths)]
+        domain_labels = [infer_domain_from_path(p, synthetic_indicators) for p in paths]
         domain_labels = torch.tensor(domain_labels, dtype=torch.long, device=device)
 
         # dynamic GRL lambda schedule (DANN paper common schedule)
@@ -158,7 +138,7 @@ def train_epoch_dann(
         pbar.set_postfix(loss=running_loss / (step + 1))
     metrics = {}
     if len(y_true) > 0:
-        from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
+        
         acc = accuracy_score(y_true, y_pred)
         prec, rec, f1, _ = precision_recall_fscore_support(y_true, y_pred, average="binary", zero_division=0)
         auc = None
@@ -179,8 +159,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
     num_classes = len(train_ds.label_map) if hasattr(train_ds, "label_map") else len(train_ds.dataset.label_map)
     model = None
 
-    if args.dann:
-        # use RoadworkClassifier wrapping the chosen backbone (lazy import)        
+    if args.dann:    
         model = RoadworkClassifier(
             backbone_name=model_name,
             pretrained=args.pretrained,
@@ -248,7 +227,6 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
                 lambda_domain_weight=args.lambda_domain,
                 synthetic_indicators=args.synthetic_indicators,
                 tb_writer=writer,
-                epoch_idx=epoch,
             )
             val_metrics = evaluate(model, val_loader, device, num_classes=num_classes)
             print(f"[DANN pretrain {epoch+1}/{args.pretrain_epochs}] train_f1={dann_metrics.get('f1',0):.4f} train_acc={dann_metrics.get('accuracy',0):.4f} train_loss={dann_metrics['loss']:.4f} | val_acc={val_metrics['accuracy']:.4f} val_loss={val_metrics['loss']:.4f}")
@@ -265,15 +243,13 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
             writer.add_scalar("pretrain/val_rec", val_metrics["recall"], epoch)
             writer.add_scalar("pretrain/val_loss", val_metrics["loss"], epoch)
             writer.add_scalar("pretrain/val_acc", val_metrics["accuracy"], epoch)
+            writer.add_scalar("pretrain/val_mcc", val_metrics["mcc"], epoch)
             # save last
             torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, os.path.join(args.output_dir, model_name + "_last.pth"))
             # save best by val f1 (or val acc depending on arg)
-            save_metric = val_metrics.get(args.save_metric, val_metrics["accuracy"])
-            if args.save_metric == "f1":
-                # prefer f1 if available
-                cur = val_metrics.get("f1", val_metrics["accuracy"])
-            else:
-                cur = save_metric
+            cur_mcc = val_metrics.get("mcc", 0)
+            cur_acc = val_metrics.get("accuracy", 0)
+            cur = (cur_mcc + cur_acc) / 2.0
             if cur > best_val_acc:
                 best_val_acc = cur
                 torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, best_ckpt_path)
@@ -287,7 +263,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
         loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{args.epochs}", ncols=100)
         running_loss, correct, total = 0.0, 0, 0
         for step, batch in enumerate(loop):
-            imgs, labels, metas, paths = batch
+            imgs, labels, _ = batch
             imgs = imgs.to(device)
             labels = ensure_tensor_labels(labels).to(device)
             mask = labels >= 0
@@ -352,23 +328,23 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
                 if isinstance(v, float):
                     writer.add_scalar(f"val/{k}", v, epoch)
             # log sample images (normalized -> denormalize)
-            if val_metrics.get("samples"):
-                imgs_to_log = torch.stack([s[0] for s in val_metrics["samples"]])
-                imgs_to_log = denormalize(imgs_to_log)
-                writer.add_images("val/samples", imgs_to_log, epoch)
-            if val_metrics.get("misclassified"):
-                imgs_mis = torch.stack([s[0] for s in val_metrics["misclassified"]])
-                imgs_mis = denormalize(imgs_mis)
-                writer.add_images("val/misclassified", imgs_mis, epoch)
-                writer.add_text("val/misclassified_pred", "\n".join([str(s[1]) for s in val_metrics["misclassified"]]), epoch)
-                writer.add_text("val/misclassified_true", "\n".join([str(s[2]) for s in val_metrics["misclassified"]]), epoch)
-                writer.add_text("val/misclassified_path", "\n".join([str(s[3]) for s in val_metrics["misclassified"]]), epoch)
+            # if val_metrics.get("samples"):
+            #     imgs_to_log = torch.stack([s[0] for s in val_metrics["samples"]])
+            #     imgs_to_log = denormalize(imgs_to_log)
+            #     writer.add_images("val/samples", imgs_to_log, epoch)
+            # if val_metrics.get("misclassified"):
+            #     imgs_mis = torch.stack([s[0] for s in val_metrics["misclassified"]])
+            #     imgs_mis = denormalize(imgs_mis)
+            #     writer.add_images("val/misclassified", imgs_mis, epoch)
+            #     writer.add_text("val/misclassified_pred", "\n".join([str(s[1]) for s in val_metrics["misclassified"]]), epoch)
+            #     writer.add_text("val/misclassified_true", "\n".join([str(s[2]) for s in val_metrics["misclassified"]]), epoch)
+            #     writer.add_text("val/misclassified_path", "\n".join([str(s[3]) for s in val_metrics["misclassified"]]), epoch)
 
         # checkpointing
         # save last
         torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, os.path.join(args.output_dir, model_name + "_last.pth"))
 
-        total_acc = (val_metrics["accuracy"] + train_acc) / 2.0
+        total_acc = (val_metrics["accuracy"] + val_metrics["mcc"]) / 2.0
         print(f"[Epoch {epoch+1}/{args.epochs}] Train Acc: {train_acc:.4f}, Loss: {train_loss:.4f} | Val Acc: {val_metrics['accuracy']:.4f}, Loss: {val_metrics['loss']:.4f} Total Acc: {total_acc:.4f}")
 
         if total_acc > best_val_acc:
@@ -386,11 +362,11 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
 # -------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", nargs="+", required=True, help="List of backbone model names to train and ensemble")
-    parser.add_argument("--train-dirs", nargs="+", required=True, help="Directories for training images")
-    parser.add_argument("--val-split", type=float, default=0.2, help="Fraction of data used for validation (0–1)")
+    parser.add_argument("--model", required=True, help="Backbone model name to train and ensemble")
+    parser.add_argument("--train-path", required=True, help="File list path for training images")
+    parser.add_argument("--val-path", required=True, help="File list path for validation images")
     parser.add_argument("--output-dir", type=str, default="checkpoints")
-    parser.add_argument("--pretrain-epochs", type=int, default=0, help="If >0 and --dann, number of DANN pretrain epochs")
+    parser.add_argument("--pretrain-epochs", type=int, default=8, help="If >0 and --dann, number of DANN pretrain epochs")
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--pretrained", action="store_true")
     parser.add_argument("--batch-size", type=int, default=64)
@@ -400,7 +376,6 @@ if __name__ == "__main__":
     parser.add_argument("--num-workers", type=int, default=8)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--augment", action="store_true")
-    parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--mixup-alpha", type=float, default=0.2)
     parser.add_argument("--mixup-prob", type=float, default=0.5)
     parser.add_argument("--cutmix-alpha", type=float, default=1.0)
@@ -408,86 +383,35 @@ if __name__ == "__main__":
     parser.add_argument("--tb-logdir", type=str, default=None, help="TensorBoard root dir")
     parser.add_argument("--log-every-steps", type=int, default=50)
     parser.add_argument("--log-image-count", type=int, default=16)
-    parser.add_argument("--real-only-val", action="store_true")
-    parser.add_argument("--is-synthetic-key", type=str, default="is_synthetic")
     parser.add_argument("--resume", type=str, default=None)
-    parser.add_argument("--dann", action="store_true", help="Enable domain-adversarial pretraining (requires models.custom_model.RoadworkClassifier)")
+    parser.add_argument("--dann", action="store_true", help="Enable domain-adversarial pretraining (requires model.roadwalk.RoadworkClassifier)")
     parser.add_argument("--lambda-domain", type=float, default=1.0, help="Domain loss weight during DANN pretrain")
     parser.add_argument("--synthetic-indicators", nargs="*", default=["synthetic", "synth", "ai_", "t2i", "i2i", "generated"])
     parser.add_argument("--head-hidden", type=int, default=512)
     parser.add_argument("--head-dropout", type=float, default=0.4)
     parser.add_argument("--domain-hidden", type=int, default=256)
-    parser.add_argument("--save-metric", dest="save_metric", choices=["f1", "accuracy", "loss"], default="f1")
     parser.add_argument("--mixed-precision", action="store_true", help="Enable AMP")
     parser.add_argument("--max-grad-norm", dest="max_grad_norm", type=float, default=0.0)
-    parser.add_argument("--pretrained-backbone", dest="pretrained", action="store_true")
     args = parser.parse_args()
 
     set_seed(args.seed)
-    device = torch.device("cpu" if args.cpu or not torch.cuda.is_available() else "cuda")
+    device = torch.device("cpu" if not torch.cuda.is_available() else "cuda")
     print("Using device:", device)
-
-    args.train_dirs = normalize_arg_list(args.train_dirs)
-    args.models = normalize_arg_list(args.models)
-    print("Training directories:", args.train_dirs)
-    print("Models to train:", args.models)
+    print("Training path:", args.train_path)
+    print("Validation path:", args.val_path)
+    print("Model to train:", args.model)
 
     # transforms
     transform_train = make_transforms(args.image_size)
     transform_val = make_transforms(args.image_size)
 
     # build dataset
-    full_ds = NatixDataset(dirs=args.train_dirs, transform=transform_train, augment=args.augment)
-    num_samples = len(full_ds)
-    indices = list(range(num_samples))
-    random.shuffle(indices)
+    train_ds = NatixDataset(filelist_path=args.train_path, transform=transform_train, augment=args.augment)
+    val_ds = NatixDataset(filelist_path=args.val_path, transform=transform_val, augment=args.augment)
 
-    split = int(num_samples * (1 - args.val_split))
-    train_indices, val_indices = indices[:split], indices[split:]
-
-    train_ds = Subset(full_ds, train_indices)
-    val_base = NatixDataset(dirs=args.train_dirs, transform=transform_val, label_map=full_ds.label_map)
-    val_ds = Subset(val_base, val_indices)
-
-    # attach label_map to subsets for compatibility
-    train_ds.label_map = full_ds.label_map
-    val_ds.label_map = full_ds.label_map
+    num_samples = len(train_ds) + len(val_ds)
 
     print(f"Total samples: {num_samples}, Train: {len(train_ds)}, Val: {len(val_ds)}")
 
-    if args.real_only_val:
-        idxs = filter_real_only_indices(val_ds, is_synthetic_key=args.is_synthetic_key)
-        val_ds = Subset(val_ds, idxs)
-        print(f"Real-only validation: {len(val_ds)} samples")
-
     best_ckpts = []
-    for model_name in args.models:
-        # If using DANN and backbone provided, pass backbone name to DANN builder; otherwise use model_name
-        ckpt = train_single_model(args, model_name, train_ds, val_ds, device)
-        best_ckpts.append(ckpt)
-
-    # Evaluate ensemble using first model builder for architecture (evaluate_ensemble expects a builder)
-    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn, num_workers=args.num_workers)
-    
-    builders = []
-    if args.dann:
-        for model_name in args.models:
-            builder = RoadworkClassifier(
-                backbone_name=model_name,
-                pretrained=args.pretrained,
-                num_classes=2,
-                head_hidden=args.head_hidden,
-                domain_adapt=True,
-                domain_hidden=args.domain_hidden,
-                grl_lambda=0.0,
-                dropout=args.head_dropout,
-            )
-            builders.append(builder)
-    else:
-        for model_name in args.models:
-            backbone_for_ensemble = model_name
-            builder = get_backbone_builder(backbone_for_ensemble)
-            builders.append(builder)
-    ensemble_metrics = evaluate_ensemble(best_ckpts, builders, val_loader, device, num_classes=len(train_ds.label_map))
-    print("\n===== Ensemble Metrics =====")
-    print(ensemble_metrics)
+    ckpt = train_single_model(args, args.model, train_ds, val_ds, device)

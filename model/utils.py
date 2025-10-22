@@ -6,12 +6,12 @@ import torch
 import torchvision.transforms as T
 from datasets.natix_dataset import NatixDataset
 import torch.nn as nn
-from torchvision.utils import make_grid
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 from PIL import Image
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader
 import re
 from tqdm import tqdm
+from sklearn.metrics import matthews_corrcoef
 
 
 # -------------------------
@@ -97,15 +97,13 @@ def collate_fn(batch):
     We'll output:
        images: tensor (B,C,H,W)
        labels: torch.LongTensor (B,) where -1 indicates missing label
-       metas: list of dicts
        paths: list of strings
     """
     imgs = torch.stack([b[0] for b in batch])
     labels = [b[1] for b in batch]
-    metas = [b[2] for b in batch]
-    paths = [b[3] for b in batch]
+    paths = [b[2] for b in batch]
     labels_t = torch.tensor(labels, dtype=torch.long)
-    return imgs, labels_t, metas, paths
+    return imgs, labels_t, paths
 
 def filter_real_only_indices(dataset: NatixDataset, is_synthetic_key: str="is_synthetic") -> List[int]:
     idxs = []
@@ -152,7 +150,7 @@ def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
     criterion = nn.CrossEntropyLoss()
     with torch.no_grad():
         pbar = tqdm(dataloader, desc="val", leave=False)
-        for images, labels, metas, paths in pbar:
+        for images, labels, paths in pbar:
             images = images.to(device)
             labels_tensor = torch.tensor([(-1 if l is None else l) for l in labels],dtype=torch.long)
             mask = labels_tensor>=0
@@ -175,6 +173,7 @@ def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
                     misclassified.append((images[i].cpu(), int(pred[i]), int(labels_tensor.cpu()[i].item()), paths[i]))
     if not preds:
         return {"loss":0.0,"accuracy":0.0,"precision":0.0,"recall":0.0,"f1":0.0,"roc_auc":0.0,"samples":samples,"misclassified":misclassified}
+        
     avg_loss = float(sum(losses)/len(losses))
     acc = accuracy_score(trues,preds)
     precision, recall, f1, _ = precision_recall_fscore_support(trues,preds,average="binary" if num_classes==2 else "macro",zero_division=0)
@@ -182,7 +181,14 @@ def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
     if num_classes==2:
         try: roc_auc = float(roc_auc_score(trues, probs))
         except: pass
-    return {"loss":avg_loss,"accuracy":acc,"precision":float(precision),"recall":float(recall),"f1":float(f1),"roc_auc":float(roc_auc),"samples":samples,"misclassified":misclassified}
+
+    mcc = 0.0
+    if num_classes==2:
+        try:            
+            mcc = float(matthews_corrcoef(trues, preds))
+        except:
+            pass
+    return {"loss":avg_loss,"accuracy":acc,"precision":float(precision),"recall":float(recall),"f1":float(f1),"roc_auc":float(roc_auc),"samples":samples,"misclassified":misclassified,"mcc":float(mcc)}
 
 def evaluate_ensemble(model_paths: List[str], model_builders: List[Any], dataloader: DataLoader, device: torch.device, num_classes: int, weights: List[float]=None):
     models=[]
@@ -201,7 +207,7 @@ def evaluate_ensemble(model_paths: List[str], model_builders: List[Any], dataloa
     criterion = nn.CrossEntropyLoss()
     with torch.no_grad():
         for batch in dataloader:
-            images, labels, metas, paths = batch
+            images, labels, _ = batch
             images = images.to(device)
             labels_tensor = torch.tensor([(-1 if l is None else l) for l in labels],dtype=torch.long)
             mask = labels_tensor>=0
