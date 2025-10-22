@@ -103,10 +103,14 @@ class NatixClassifierAPI:
             try:
                 image_bytes = base64.b64decode(image_data)
                 image = Image.open(io.BytesIO(image_bytes))
-                cv2.imwrite(f"images/received_image_{self.request_count}.png", cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR))
+                image_np = np.array(image)
+                cv2.imwrite(f"images/received_image_{self.request_count}.png", cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
                 self.request_count += 1
                 print(f"Processing request #{self.request_count}")
-                image_np = np.array(image)
+                if image_np.shape[1] == 224:
+                    print("Image width is 224, skipping resize.")
+                else:
+                    image_np = cv2.resize(image_np, (224, 224))
                 roadwork_score = self.classifier.predict(image_np)
 
                 classification_result = {"roadwork_confidence": roadwork_score}
