@@ -1,8 +1,0 @@
-Using device: cuda
-Training directories: ['/workspace/hf_extracted_images', '/workspace/synthetic']
-Models to train: ['deit_small_patch16_224']
-Total samples: 21919, Train: 19727, Val: 2192
-
-=== Training model: deit_small_patch16_224 ===
-TensorBoard logs -> tb_logs/deit_small_patch16_224_20251018_082429
-Starting DANN pretraining for 30 epochs
