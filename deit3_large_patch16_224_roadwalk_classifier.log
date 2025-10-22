@@ -4,70 +4,96 @@ Models to train: ['deit3_large_patch16_224']
 Total samples: 21919, Train: 19727, Val: 2192
 
 === Training model: deit3_large_patch16_224 ===
-TensorBoard logs -> tb_logs/deit3_large_patch16_224_20251018_084055
+TensorBoard logs -> tb_logs/deit3_large_patch16_224_20251019_005006
+Resuming training from checkpoint: checkpoints/deit3_large_patch16_224_best.pth
 Starting DANN pretraining for 30 epochs
-[DANN pretrain 1/30] train_f1=0.5863 train_loss=0.7693 | val_acc=0.5821 val_loss=0.6799
+[DANN pretrain 1/30] train_f1=0.9284 train_loss=0.3871 | val_acc=0.9115 val_loss=0.3061
 Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 2/30] train_f1=0.6809 train_loss=0.7360 | val_acc=0.7208 val_loss=0.6449
+[DANN pretrain 2/30] train_f1=0.9288 train_loss=0.3800 | val_acc=0.9161 val_loss=0.3092
 Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 3/30] train_f1=0.7534 train_loss=0.7061 | val_acc=0.7815 val_loss=0.6169
+[DANN pretrain 3/30] train_f1=0.9276 train_loss=0.3747 | val_acc=0.9056 val_loss=0.3071
+[DANN pretrain 4/30] train_f1=0.9261 train_loss=0.3720 | val_acc=0.9097 val_loss=0.2965
+[DANN pretrain 5/30] train_f1=0.9260 train_loss=0.3681 | val_acc=0.9033 val_loss=0.2985
+[DANN pretrain 6/30] train_f1=0.9271 train_loss=0.3652 | val_acc=0.9151 val_loss=0.2871
+[DANN pretrain 7/30] train_f1=0.9300 train_loss=0.3612 | val_acc=0.9065 val_loss=0.2912
+[DANN pretrain 8/30] train_f1=0.9265 train_loss=0.3620 | val_acc=0.9110 val_loss=0.2899
+[DANN pretrain 9/30] train_f1=0.9268 train_loss=0.3604 | val_acc=0.9188 val_loss=0.2837
 Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 4/30] train_f1=0.7933 train_loss=0.6779 | val_acc=0.8034 val_loss=0.5847
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 5/30] train_f1=0.8224 train_loss=0.6501 | val_acc=0.8171 val_loss=0.5596
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 6/30] train_f1=0.8380 train_loss=0.6236 | val_acc=0.8321 val_loss=0.5325
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 7/30] train_f1=0.8492 train_loss=0.5989 | val_acc=0.8353 val_loss=0.5092
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 8/30] train_f1=0.8582 train_loss=0.5748 | val_acc=0.8476 val_loss=0.4851
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 9/30] train_f1=0.8670 train_loss=0.5491 | val_acc=0.8572 val_loss=0.4606
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 10/30] train_f1=0.8782 train_loss=0.5247 | val_acc=0.8618 val_loss=0.4346
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 11/30] train_f1=0.8794 train_loss=0.5040 | val_acc=0.8764 val_loss=0.4080
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 12/30] train_f1=0.8865 train_loss=0.4826 | val_acc=0.8718 val_loss=0.3960
-[DANN pretrain 13/30] train_f1=0.8925 train_loss=0.4637 | val_acc=0.8755 val_loss=0.3724
-[DANN pretrain 14/30] train_f1=0.8984 train_loss=0.4459 | val_acc=0.8809 val_loss=0.3594
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 15/30] train_f1=0.8992 train_loss=0.4332 | val_acc=0.8786 val_loss=0.3552
-[DANN pretrain 16/30] train_f1=0.9058 train_loss=0.4157 | val_acc=0.8800 val_loss=0.3418
-[DANN pretrain 17/30] train_f1=0.9062 train_loss=0.4055 | val_acc=0.8859 val_loss=0.3251
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 18/30] train_f1=0.9077 train_loss=0.3959 | val_acc=0.8891 val_loss=0.3193
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 19/30] train_f1=0.9087 train_loss=0.3866 | val_acc=0.8955 val_loss=0.3090
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 20/30] train_f1=0.9126 train_loss=0.3785 | val_acc=0.8978 val_loss=0.3022
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 21/30] train_f1=0.9104 train_loss=0.3757 | val_acc=0.9005 val_loss=0.2840
-Saved best pretrain checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[DANN pretrain 22/30] train_f1=0.9115 train_loss=0.3678 | val_acc=0.8951 val_loss=0.2950
-[DANN pretrain 23/30] train_f1=0.9160 train_loss=0.3590 | val_acc=0.8983 val_loss=0.2828
-[DANN pretrain 24/30] train_f1=0.9149 train_loss=0.3571 | val_acc=0.8951 val_loss=0.2877
-[DANN pretrain 25/30] train_f1=0.9163 train_loss=0.3513 | val_acc=0.9005 val_loss=0.2766
-[DANN pretrain 26/30] train_f1=0.9182 train_loss=0.3493 | val_acc=0.8992 val_loss=0.2752
-[DANN pretrain 27/30] train_f1=0.9203 train_loss=0.3423 | val_acc=0.8983 val_loss=0.2676
-[DANN pretrain 28/30] train_f1=0.9182 train_loss=0.3432 | val_acc=0.9001 val_loss=0.2605
-[DANN pretrain 29/30] train_f1=0.9183 train_loss=0.3404 | val_acc=0.8974 val_loss=0.2648
-[DANN pretrain 30/30] train_f1=0.9208 train_loss=0.3356 | val_acc=0.9001 val_loss=0.2706
+[DANN pretrain 10/30] train_f1=0.9275 train_loss=0.3568 | val_acc=0.9142 val_loss=0.2842
+[DANN pretrain 11/30] train_f1=0.9245 train_loss=0.3575 | val_acc=0.9188 val_loss=0.2784
+[DANN pretrain 12/30] train_f1=0.9243 train_loss=0.3551 | val_acc=0.9069 val_loss=0.2880
+[DANN pretrain 13/30] train_f1=0.9264 train_loss=0.3531 | val_acc=0.9078 val_loss=0.2795
+[DANN pretrain 14/30] train_f1=0.9267 train_loss=0.3507 | val_acc=0.9069 val_loss=0.2773
+[DANN pretrain 15/30] train_f1=0.9255 train_loss=0.3531 | val_acc=0.9078 val_loss=0.2891
+[DANN pretrain 16/30] train_f1=0.9279 train_loss=0.3471 | val_acc=0.9078 val_loss=0.2867
+[DANN pretrain 17/30] train_f1=0.9246 train_loss=0.3474 | val_acc=0.9151 val_loss=0.2752
+[DANN pretrain 18/30] train_f1=0.9264 train_loss=0.3466 | val_acc=0.9047 val_loss=0.2797
+[DANN pretrain 19/30] train_f1=0.9250 train_loss=0.3447 | val_acc=0.9092 val_loss=0.2770
+[DANN pretrain 20/30] train_f1=0.9278 train_loss=0.3434 | val_acc=0.9097 val_loss=0.2754
+[DANN pretrain 21/30] train_f1=0.9246 train_loss=0.3463 | val_acc=0.9120 val_loss=0.2639
+[DANN pretrain 22/30] train_f1=0.9250 train_loss=0.3438 | val_acc=0.9065 val_loss=0.2777
+[DANN pretrain 23/30] train_f1=0.9271 train_loss=0.3399 | val_acc=0.9069 val_loss=0.2709
+[DANN pretrain 24/30] train_f1=0.9251 train_loss=0.3406 | val_acc=0.9069 val_loss=0.2766
+[DANN pretrain 25/30] train_f1=0.9268 train_loss=0.3394 | val_acc=0.9088 val_loss=0.2694
+[DANN pretrain 26/30] train_f1=0.9252 train_loss=0.3408 | val_acc=0.9088 val_loss=0.2714
+[DANN pretrain 27/30] train_f1=0.9282 train_loss=0.3367 | val_acc=0.9101 val_loss=0.2664
+[DANN pretrain 28/30] train_f1=0.9233 train_loss=0.3400 | val_acc=0.9138 val_loss=0.2617
+[DANN pretrain 29/30] train_f1=0.9244 train_loss=0.3399 | val_acc=0.9106 val_loss=0.2654
+[DANN pretrain 30/30] train_f1=0.9263 train_loss=0.3374 | val_acc=0.9088 val_loss=0.2748
 Starting supervised training for 50 epochs
-[Epoch 1/50] Train Acc: 0.8825, Loss: 0.1218 | Val Acc: 0.8987, Loss: 0.2557 Total Acc: 0.8906
+[Epoch 1/50] Train Acc: 0.8890, Loss: 0.0950 | Val Acc: 0.9088, Loss: 0.2586 Total Acc: 0.8989
 Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[Epoch 2/50] Train Acc: 0.8774, Loss: 0.1202 | Val Acc: 0.8983, Loss: 0.2599 Total Acc: 0.8878
-[Epoch 3/50] Train Acc: 0.8855, Loss: 0.1203 | Val Acc: 0.9015, Loss: 0.2624 Total Acc: 0.8935
+[Epoch 2/50] Train Acc: 0.8841, Loss: 0.0950 | Val Acc: 0.9056, Loss: 0.2638 Total Acc: 0.8948
+[Epoch 3/50] Train Acc: 0.8930, Loss: 0.0954 | Val Acc: 0.9060, Loss: 0.2673 Total Acc: 0.8995
 Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[Epoch 4/50] Train Acc: 0.8823, Loss: 0.1154 | Val Acc: 0.9019, Loss: 0.2613 Total Acc: 0.8921
-[Epoch 5/50] Train Acc: 0.8782, Loss: 0.1247 | Val Acc: 0.9024, Loss: 0.2600 Total Acc: 0.8903
-[Epoch 6/50] Train Acc: 0.8779, Loss: 0.1200 | Val Acc: 0.8859, Loss: 0.2676 Total Acc: 0.8819
-[Epoch 7/50] Train Acc: 0.8794, Loss: 0.1185 | Val Acc: 0.9024, Loss: 0.2666 Total Acc: 0.8909
-[Epoch 8/50] Train Acc: 0.8793, Loss: 0.1133 | Val Acc: 0.9015, Loss: 0.2588 Total Acc: 0.8904
-[Epoch 9/50] Train Acc: 0.8815, Loss: 0.1180 | Val Acc: 0.8987, Loss: 0.2723 Total Acc: 0.8901
-[Epoch 10/50] Train Acc: 0.8875, Loss: 0.1081 | Val Acc: 0.9015, Loss: 0.2642 Total Acc: 0.8945
+[Epoch 4/50] Train Acc: 0.8877, Loss: 0.0922 | Val Acc: 0.9115, Loss: 0.2654 Total Acc: 0.8996
 Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[Epoch 11/50] Train Acc: 0.8834, Loss: 0.1136 | Val Acc: 0.8992, Loss: 0.2593 Total Acc: 0.8913
-[Epoch 12/50] Train Acc: 0.8874, Loss: 0.1077 | Val Acc: 0.9074, Loss: 0.2595 Total Acc: 0.8974
+[Epoch 5/50] Train Acc: 0.8843, Loss: 0.1000 | Val Acc: 0.9120, Loss: 0.2638 Total Acc: 0.8981
+[Epoch 6/50] Train Acc: 0.8837, Loss: 0.0974 | Val Acc: 0.9001, Loss: 0.2673 Total Acc: 0.8919
+[Epoch 7/50] Train Acc: 0.8849, Loss: 0.0969 | Val Acc: 0.9101, Loss: 0.2690 Total Acc: 0.8975
+[Epoch 8/50] Train Acc: 0.8832, Loss: 0.0935 | Val Acc: 0.9083, Loss: 0.2615 Total Acc: 0.8957
+[Epoch 9/50] Train Acc: 0.8879, Loss: 0.0979 | Val Acc: 0.9074, Loss: 0.2732 Total Acc: 0.8977
+[Epoch 10/50] Train Acc: 0.8922, Loss: 0.0915 | Val Acc: 0.9042, Loss: 0.2654 Total Acc: 0.8982
+[Epoch 11/50] Train Acc: 0.8889, Loss: 0.0966 | Val Acc: 0.9074, Loss: 0.2590 Total Acc: 0.8982
+[Epoch 12/50] Train Acc: 0.8936, Loss: 0.0934 | Val Acc: 0.9133, Loss: 0.2600 Total Acc: 0.9035
 Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
-[Epoch 13/50] Train Acc: 0.8785, Loss: 0.1125 | Val Acc: 0.9001, Loss: 0.2602 Total Acc: 0.8893
+[Epoch 13/50] Train Acc: 0.8839, Loss: 0.0983 | Val Acc: 0.9078, Loss: 0.2540 Total Acc: 0.8959
+[Epoch 14/50] Train Acc: 0.8848, Loss: 0.0957 | Val Acc: 0.8992, Loss: 0.2712 Total Acc: 0.8920
+[Epoch 15/50] Train Acc: 0.8864, Loss: 0.0932 | Val Acc: 0.9010, Loss: 0.2673 Total Acc: 0.8937
+[Epoch 16/50] Train Acc: 0.8826, Loss: 0.0980 | Val Acc: 0.9110, Loss: 0.2607 Total Acc: 0.8968
+[Epoch 17/50] Train Acc: 0.8833, Loss: 0.0987 | Val Acc: 0.9060, Loss: 0.2692 Total Acc: 0.8946
+[Epoch 18/50] Train Acc: 0.8814, Loss: 0.0960 | Val Acc: 0.9097, Loss: 0.2606 Total Acc: 0.8955
+[Epoch 19/50] Train Acc: 0.8924, Loss: 0.0876 | Val Acc: 0.9120, Loss: 0.2653 Total Acc: 0.9022
+[Epoch 20/50] Train Acc: 0.8802, Loss: 0.0926 | Val Acc: 0.9042, Loss: 0.2666 Total Acc: 0.8922
+[Epoch 21/50] Train Acc: 0.8869, Loss: 0.0949 | Val Acc: 0.9069, Loss: 0.2710 Total Acc: 0.8969
+[Epoch 22/50] Train Acc: 0.8910, Loss: 0.0898 | Val Acc: 0.9005, Loss: 0.2657 Total Acc: 0.8958
+[Epoch 23/50] Train Acc: 0.8908, Loss: 0.0932 | Val Acc: 0.9056, Loss: 0.2677 Total Acc: 0.8982
+[Epoch 24/50] Train Acc: 0.8876, Loss: 0.0943 | Val Acc: 0.9078, Loss: 0.2696 Total Acc: 0.8977
+[Epoch 25/50] Train Acc: 0.8932, Loss: 0.0874 | Val Acc: 0.9092, Loss: 0.2750 Total Acc: 0.9012
+[Epoch 26/50] Train Acc: 0.8829, Loss: 0.0906 | Val Acc: 0.9106, Loss: 0.2681 Total Acc: 0.8967
+[Epoch 27/50] Train Acc: 0.8853, Loss: 0.0944 | Val Acc: 0.9051, Loss: 0.2685 Total Acc: 0.8952
+[Epoch 28/50] Train Acc: 0.8924, Loss: 0.0879 | Val Acc: 0.9092, Loss: 0.2650 Total Acc: 0.9008
+[Epoch 29/50] Train Acc: 0.8886, Loss: 0.0921 | Val Acc: 0.9074, Loss: 0.2665 Total Acc: 0.8980
+[Epoch 30/50] Train Acc: 0.8860, Loss: 0.0972 | Val Acc: 0.9088, Loss: 0.2710 Total Acc: 0.8974
+[Epoch 31/50] Train Acc: 0.8869, Loss: 0.0906 | Val Acc: 0.9147, Loss: 0.2652 Total Acc: 0.9008
+[Epoch 32/50] Train Acc: 0.8846, Loss: 0.0918 | Val Acc: 0.9106, Loss: 0.2646 Total Acc: 0.8976
+[Epoch 33/50] Train Acc: 0.8875, Loss: 0.0909 | Val Acc: 0.9010, Loss: 0.2674 Total Acc: 0.8942
+[Epoch 34/50] Train Acc: 0.8869, Loss: 0.0916 | Val Acc: 0.9156, Loss: 0.2695 Total Acc: 0.9013
+[Epoch 35/50] Train Acc: 0.8885, Loss: 0.0916 | Val Acc: 0.9215, Loss: 0.2606 Total Acc: 0.9050
+Saved new best checkpoint -> checkpoints/deit3_large_patch16_224_best.pth
+[Epoch 36/50] Train Acc: 0.8814, Loss: 0.0941 | Val Acc: 0.9147, Loss: 0.2620 Total Acc: 0.8981
+[Epoch 37/50] Train Acc: 0.8824, Loss: 0.0944 | Val Acc: 0.9129, Loss: 0.2611 Total Acc: 0.8977
+[Epoch 38/50] Train Acc: 0.8922, Loss: 0.0922 | Val Acc: 0.9133, Loss: 0.2615 Total Acc: 0.9028
+[Epoch 39/50] Train Acc: 0.8878, Loss: 0.0896 | Val Acc: 0.9005, Loss: 0.2736 Total Acc: 0.8942
+[Epoch 40/50] Train Acc: 0.8808, Loss: 0.0906 | Val Acc: 0.9101, Loss: 0.2631 Total Acc: 0.8955
+[Epoch 41/50] Train Acc: 0.8967, Loss: 0.0832 | Val Acc: 0.9124, Loss: 0.2663 Total Acc: 0.9046
+[Epoch 42/50] Train Acc: 0.8926, Loss: 0.0865 | Val Acc: 0.9133, Loss: 0.2638 Total Acc: 0.9030
+[Epoch 43/50] Train Acc: 0.8847, Loss: 0.0958 | Val Acc: 0.9133, Loss: 0.2528 Total Acc: 0.8990
+[Epoch 44/50] Train Acc: 0.8940, Loss: 0.0867 | Val Acc: 0.9120, Loss: 0.2650 Total Acc: 0.9030
+[Epoch 45/50] Train Acc: 0.8905, Loss: 0.0896 | Val Acc: 0.9120, Loss: 0.2644 Total Acc: 0.9012
+[Epoch 46/50] Train Acc: 0.8956, Loss: 0.0869 | Val Acc: 0.9110, Loss: 0.2690 Total Acc: 0.9033
+[Epoch 47/50] Train Acc: 0.8930, Loss: 0.0867 | Val Acc: 0.9051, Loss: 0.2731 Total Acc: 0.8990
+[Epoch 48/50] Train Acc: 0.8846, Loss: 0.0929 | Val Acc: 0.9106, Loss: 0.2700 Total Acc: 0.8976
+[Epoch 49/50] Train Acc: 0.8898, Loss: 0.0923 | Val Acc: 0.9147, Loss: 0.2681 Total Acc: 0.9022
+[Epoch 50/50] Train Acc: 0.8885, Loss: 0.0952 | Val Acc: 0.9097, Loss: 0.2697 Total Acc: 0.8991
+Model deit3_large_patch16_224 best checkpoint saved at: checkpoints/deit3_large_patch16_224_best.pth

@@ -34,6 +34,7 @@ from model.utils import (
     normalize_arg_list,
     FocalLoss,
 )
+from model.roadwalk import RoadworkClassifier
 
 # Optional DANN model (only imported if --dann)
 # from models.custom_model import RoadworkClassifier  <-- imported lazily when needed
@@ -179,10 +180,9 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
     model = None
 
     if args.dann:
-        # use RoadworkClassifier wrapping the chosen backbone (lazy import)
-        from model.roadwalk import RoadworkClassifier
+        # use RoadworkClassifier wrapping the chosen backbone (lazy import)        
         model = RoadworkClassifier(
-            backbone_name=args.backbone if args.backbone else model_name,
+            backbone_name=model_name,
             pretrained=args.pretrained,
             num_classes=num_classes,
             head_hidden=args.head_hidden,
@@ -251,7 +251,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
                 epoch_idx=epoch,
             )
             val_metrics = evaluate(model, val_loader, device, num_classes=num_classes)
-            print(f"[DANN pretrain {epoch+1}/{args.pretrain_epochs}] train_f1={dann_metrics.get('f1',0):.4f} train_loss={dann_metrics['loss']:.4f} | val_acc={val_metrics['accuracy']:.4f} val_loss={val_metrics['loss']:.4f}")
+            print(f"[DANN pretrain {epoch+1}/{args.pretrain_epochs}] train_f1={dann_metrics.get('f1',0):.4f} train_acc={dann_metrics.get('accuracy',0):.4f} train_loss={dann_metrics['loss']:.4f} | val_acc={val_metrics['accuracy']:.4f} val_loss={val_metrics['loss']:.4f}")
             # TB log
             writer.add_scalar("pretrain/train_f1", dann_metrics.get("f1", 0), epoch)
             writer.add_scalar("pretrain/train_acc", dann_metrics.get("accuracy", 0), epoch)
@@ -421,7 +421,6 @@ if __name__ == "__main__":
     parser.add_argument("--mixed-precision", action="store_true", help="Enable AMP")
     parser.add_argument("--max-grad-norm", dest="max_grad_norm", type=float, default=0.0)
     parser.add_argument("--pretrained-backbone", dest="pretrained", action="store_true")
-    parser.add_argument("--backbone", type=str, default=None, help="Backbone name used for DANN (if --dann), otherwise each model in --models is used")
     args = parser.parse_args()
 
     set_seed(args.seed)
@@ -464,15 +463,31 @@ if __name__ == "__main__":
     best_ckpts = []
     for model_name in args.models:
         # If using DANN and backbone provided, pass backbone name to DANN builder; otherwise use model_name
-        model_builder_name = args.backbone if args.dann and args.backbone else model_name
-        ckpt = train_single_model(args, model_builder_name, train_ds, val_ds, device)
+        ckpt = train_single_model(args, model_name, train_ds, val_ds, device)
         best_ckpts.append(ckpt)
 
     # Evaluate ensemble using first model builder for architecture (evaluate_ensemble expects a builder)
     val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn, num_workers=args.num_workers)
-    # for evaluate_ensemble we pass the get_backbone_builder of the first model in args.models (fallback to args.backbone)
-    backbone_for_ensemble = args.backbone if args.backbone else args.models[0]
-    builder = get_backbone_builder(backbone_for_ensemble)
-    ensemble_metrics = evaluate_ensemble(best_ckpts, builder, val_loader, device, num_classes=len(train_ds.label_map))
+    
+    builders = []
+    if args.dann:
+        for model_name in args.models:
+            builder = RoadworkClassifier(
+                backbone_name=model_name,
+                pretrained=args.pretrained,
+                num_classes=2,
+                head_hidden=args.head_hidden,
+                domain_adapt=True,
+                domain_hidden=args.domain_hidden,
+                grl_lambda=0.0,
+                dropout=args.head_dropout,
+            )
+            builders.append(builder)
+    else:
+        for model_name in args.models:
+            backbone_for_ensemble = model_name
+            builder = get_backbone_builder(backbone_for_ensemble)
+            builders.append(builder)
+    ensemble_metrics = evaluate_ensemble(best_ckpts, builders, val_loader, device, num_classes=len(train_ds.label_map))
     print("\n===== Ensemble Metrics =====")
     print(ensemble_metrics)

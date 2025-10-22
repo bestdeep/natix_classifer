@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from typing import List
+from typing import List, Any
 from PIL import Image
 import torch
 import torchvision.transforms as T
@@ -118,6 +118,33 @@ def filter_real_only_indices(dataset: NatixDataset, is_synthetic_key: str="is_sy
 # -------------------------
 # Evaluation
 # -------------------------
+def safe_model_load(model, checkpoint):
+    state_keys = ['model_state', 'state_dict', 'model']
+    state = None
+    for k in state_keys:
+        if k in checkpoint:
+            state = checkpoint[k]
+            break
+    if state is None:
+        # maybe checkpoint itself is the state_dict
+        state = checkpoint
+
+    # sometimes saved with 'module.' prefixes (from DataParallel) — handle that
+    try:
+        model.load_state_dict(state)
+    except RuntimeError as e:
+        # try stripping 'module.' prefix if present
+        new_state = {}
+        for k, v in state.items():
+            new_key = k
+            if k.startswith("module."):
+                new_key = k[len("module."):]
+            new_state[new_key] = v
+        model.load_state_dict(new_state)
+
+    return model
+
+
 def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
     model.eval()
     losses, preds, probs, trues = [], [], [], []
@@ -157,14 +184,17 @@ def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
         except: pass
     return {"loss":avg_loss,"accuracy":acc,"precision":float(precision),"recall":float(recall),"f1":float(f1),"roc_auc":float(roc_auc),"samples":samples,"misclassified":misclassified}
 
-def evaluate_ensemble(model_paths: List[str], model_builder, dataloader: DataLoader, device: torch.device, num_classes: int, weights: List[float]=None):
+def evaluate_ensemble(model_paths: List[str], model_builders: List[Any], dataloader: DataLoader, device: torch.device, num_classes: int, weights: List[float]=None):
     models=[]
-    for path in model_paths:
+    for i, path in enumerate(model_paths):
         ckpt = torch.load(path,map_location=device)
-        m = model_builder(num_classes=num_classes, pretrained=False)
-        m.load_state_dict(ckpt["model_state"])
-        m.to(device); m.eval(); models.append(m)
-    if weights is None: weights=[1.0]*len(models)
+        m = model_builders[i](num_classes=num_classes, pretrained=False)
+        m = safe_model_load(m, ckpt)
+        m.to(device)
+        m.eval()
+        models.append(m)
+    if weights is None:
+        weights=[1.0]*len(models)
     weights = np.array(weights,dtype=np.float32)/sum(weights)
 
     all_preds, all_trues, all_probs, losses=[], [], [], []
