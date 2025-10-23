@@ -329,19 +329,6 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
             for k, v in val_metrics.items():
                 if isinstance(v, float):
                     writer.add_scalar(f"val/{k}", v, epoch)
-            # log sample images (normalized -> denormalize)
-            # if val_metrics.get("samples"):
-            #     imgs_to_log = torch.stack([s[0] for s in val_metrics["samples"]])
-            #     imgs_to_log = denormalize(imgs_to_log)
-            #     writer.add_images("val/samples", imgs_to_log, epoch)
-            # if val_metrics.get("misclassified"):
-            #     imgs_mis = torch.stack([s[0] for s in val_metrics["misclassified"]])
-            #     imgs_mis = denormalize(imgs_mis)
-            #     writer.add_images("val/misclassified", imgs_mis, epoch)
-            #     writer.add_text("val/misclassified_pred", "\n".join([str(s[1]) for s in val_metrics["misclassified"]]), epoch)
-            #     writer.add_text("val/misclassified_true", "\n".join([str(s[2]) for s in val_metrics["misclassified"]]), epoch)
-            #     writer.add_text("val/misclassified_path", "\n".join([str(s[3]) for s in val_metrics["misclassified"]]), epoch)
-
         # checkpointing
         # save last
         torch.save({"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict(), "epoch": epoch}, os.path.join(args.output, model_name + "_last.pth"))
@@ -391,7 +378,6 @@ if __name__ == "__main__":
     parser.add_argument("--cutmix-prob", type=float, default=0.5)
     parser.add_argument("--tb-logdir", type=str, default=None, help="TensorBoard root dir")
     parser.add_argument("--log-every-steps", type=int, default=50)
-    parser.add_argument("--log-image-count", type=int, default=0, help="Number of validation images to log to TB per epoch")
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--dann", action="store_true", help="Enable domain-adversarial pretraining (requires model.roadwalk.RoadworkClassifier)")
     parser.add_argument("--lambda-domain", type=float, default=1.0, help="Domain loss weight during DANN pretrain")

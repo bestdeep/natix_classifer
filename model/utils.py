@@ -155,52 +155,103 @@ def safe_model_load(model, checkpoint):
     return model
 
 
-def evaluate(model, dataloader, device, num_classes, log_image_count: int=16):
+def evaluate(model, dataloader, device, num_classes):
+    """
+    Evaluate model on dataloader where each batch yields:
+      images_stack: (B, K, C, H, W)
+      labels: (B,)  (ints or None)
+      paths: list
+      domains: optional
+
+    This function averages logits across K augmentations per sample and computes metrics per-sample.
+    """
     model.eval()
-    losses, preds, probs, trues = [], [], [], []
-    samples, misclassified = [], []
     criterion = nn.CrossEntropyLoss()
+    loss_list = []
+    all_preds = []
+    all_probs = []
+    all_trues = []
+
     with torch.no_grad():
         pbar = tqdm(dataloader, desc="val", leave=False)
-        for images, labels, paths in pbar:
-            images = images.to(device)
-            labels_tensor = torch.tensor([(-1 if l is None else l) for l in labels],dtype=torch.long)
-            mask = labels_tensor>=0
-            if mask.sum()==0: continue
-            labels_tensor = labels_tensor.to(device)
-            out = model(images)
-            if isinstance(out, tuple) or isinstance(out, list):
-                out = out[0]
-            loss = criterion(out, labels_tensor)
-            losses.append(loss.item())
-            prob = torch.softmax(out, dim=1).cpu().numpy()
-            pred = np.argmax(prob, axis=1).tolist()
-            preds.extend(pred)
-            probs.extend(prob[:,1].tolist() if num_classes==2 else prob.tolist())
-            trues.extend(labels_tensor.cpu().tolist())
-            # sample images
-            for i in range(images.size(0)):
-                if len(samples)<log_image_count: samples.append((images[i].cpu(), int(pred[i]), int(labels_tensor.cpu()[i].item()), paths[i]))
-                if pred[i]!=int(labels_tensor.cpu()[i].item()) and len(misclassified)<log_image_count:
-                    misclassified.append((images[i].cpu(), int(pred[i]), int(labels_tensor.cpu()[i].item()), paths[i]))
-    if not preds:
-        return {"loss":0.0,"accuracy":0.0,"precision":0.0,"recall":0.0,"f1":0.0,"roc_auc":0.0,"samples":samples,"misclassified":misclassified}
-        
-    avg_loss = float(sum(losses)/len(losses))
-    acc = accuracy_score(trues,preds)
-    precision, recall, f1, _ = precision_recall_fscore_support(trues,preds,average="binary" if num_classes==2 else "macro",zero_division=0)
-    roc_auc = 0.0
-    if num_classes==2:
-        try: roc_auc = float(roc_auc_score(trues, probs))
-        except: pass
+        for images_stack, labels, paths, _ in pbar:
+            # move to device
+            B, K, C, H, W = images_stack.shape
+            imgs_flat = images_stack.view(B * K, C, H, W).to(device)   # (B*K, C, H, W)
+            labels = ensure_tensor_labels(labels)                       # (B,)
+            # Create per-sample mask (True = labeled)
+            mask_per_sample = (labels >= 0)                             # (B,)
 
-    mcc = 0.0
-    if num_classes==2:
-        try:            
-            mcc = float(matthews_corrcoef(trues, preds))
-        except:
-            pass
-    return {"loss":avg_loss,"accuracy":acc,"precision":float(precision),"recall":float(recall),"f1":float(f1),"roc_auc":float(roc_auc),"samples":samples,"misclassified":misclassified,"mcc":float(mcc)}
+            # forward in one big batch
+            out = model(imgs_flat)
+            if isinstance(out, (tuple, list)):
+                class_logits_flat = out[0]
+            else:
+                class_logits_flat = out
+
+            # shape checks
+            if class_logits_flat.ndim != 2 or class_logits_flat.size(0) != B * K:
+                raise RuntimeError(f"Expected class_logits_flat shape (B*K, C), got {tuple(class_logits_flat.shape)}")
+
+            num_classes_model = class_logits_flat.size(1)
+            # reshape to (B, K, C) then average over K => (B, C)
+            class_logits = class_logits_flat.view(B, K, num_classes_model).mean(dim=1)  # (B, C)
+
+            # compute per-sample loss only for labeled samples
+            if mask_per_sample.sum() > 0:
+                labels_gpu = labels.to(device)
+                loss = criterion(class_logits[mask_per_sample], labels_gpu[mask_per_sample].to(device))
+                loss_list.append(float(loss.item()))
+            # else: no labeled samples in this batch — skip loss bookkeeping
+
+            # probs & preds per-sample
+            probs = torch.softmax(class_logits, dim=1).cpu().numpy()  # (B, C)
+            if num_classes == 2:
+                preds = (probs[:, 1] >= 0.5).astype(int).tolist()
+                prob_vals = probs[:, 1].tolist()
+            else:
+                preds = np.argmax(probs, axis=1).tolist()
+                prob_vals = probs.tolist()
+
+            # append only labeled entries
+            for i in range(B):
+                if not mask_per_sample[i]:
+                    continue
+                all_preds.append(int(preds[i]))
+                all_probs.append(prob_vals[i])
+                all_trues.append(int(labels[i].item()))
+
+    # compute final metrics
+    if len(all_trues) == 0:
+        return {"loss": 0.0, "accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0, "roc_auc": None, "mcc": None}
+
+    acc = accuracy_score(all_trues, all_preds)
+    precision, recall, f1, _ = precision_recall_fscore_support(all_trues, all_preds, average="binary" if num_classes == 2 else "macro", zero_division=0)
+    try:
+        roc_auc = None
+        if num_classes == 2 and len(set(all_trues)) > 1:
+            roc_auc = float(roc_auc_score(all_trues, all_probs))
+    except Exception:
+        roc_auc = None
+
+    try:
+        mcc = float(matthews_corrcoef(all_trues, all_preds))
+    except Exception:
+        mcc = None
+
+    mean_loss = float(np.mean(loss_list)) if loss_list else 0.0
+
+    return {
+        "loss": mean_loss,
+        "accuracy": float(acc),
+        "precision": float(precision),
+        "recall": float(recall),
+        "f1": float(f1),
+        "roc_auc": roc_auc,
+        "mcc": mcc,
+        "n_samples": len(all_trues),
+    }
+
 
 def evaluate_ensemble(model_paths: List[str], model_builders: List[Any], dataloader: DataLoader, device: torch.device, num_classes: int, weights: List[float]=None):
     models=[]

@@ -8,5 +8,5 @@ Total samples: 50048, Train: 44490, Val: 5558
 [INFO] Class distribution in training set:
  - Class 0: 20534 samples
  - Class 1: 23956 samples
-TensorBoard logs -> tb_logs/convnext_large_20251022_161631
+TensorBoard logs -> tb_logs/convnext_large_20251023_110011
 Starting DANN pretraining for 8 epochs
