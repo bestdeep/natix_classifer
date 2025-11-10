@@ -48,18 +48,18 @@ def train_epoch_dann(
     global_step: int,
     total_steps: int,
     lambda_domain_weight: float,
-    synthetic_indicators: List[str],
     tb_writer: Optional[SummaryWriter],
     weights: Optional[torch.tensor] = None,
 ):
     model.train()
-    criterion_cls = nn.CrossEntropyLoss(weight=weights) if weights is not None else nn.CrossEntropyLoss()
-    criterion_domain = nn.CrossEntropyLoss()
+    criterion_cls = nn.CrossEntropyLoss(weight=weights, reduction="mean") if weights is not None else nn.CrossEntropyLoss(reduction="mean")
+    criterion_domain = nn.CrossEntropyLoss(reduction="mean")
     running_loss = 0.0
     y_true, y_pred, y_scores = [], [], []
     pbar = tqdm(loader, desc=f"DANN-train", leave=False)
+    total_samples = 0
     for step, batch in enumerate(pbar):
-        images_stack, labels, paths, domains = batch
+        images_stack, labels, _, domains = batch
         # images_stack: (B, K, C, H, W)
         B, K, C, H, W = images_stack.shape
         imgs = images_stack.view(B * K, C, H, W).to(device)   # (B*K, C, H, W)
@@ -93,10 +93,9 @@ def train_epoch_dann(
             loss = cls_loss + lambda_domain_weight * domain_loss
 
         optimizer.zero_grad()
-        scaler.scale(loss).backward()        
+        scaler.scale(loss).backward()
         if tb_writer and (global_step % 100 == 0):
             tb_writer.add_scalar("train/dann_grl_lambda", float(grl_lambda), global_step)
-            # use detach().item() to avoid autograd-to-scalar warnings
             tb_writer.add_scalar("train/dann_cls_loss", float(cls_loss.detach().item()) if isinstance(cls_loss, torch.Tensor) else float(cls_loss), global_step)
             tb_writer.add_scalar("train/dann_domain_loss", float(domain_loss.detach().item()) if isinstance(domain_loss, torch.Tensor) else float(domain_loss), global_step)
             tb_writer.add_scalar("train/dann_loss", float(loss.detach().item()) if isinstance(loss, torch.Tensor) else float(loss), global_step)
@@ -104,7 +103,8 @@ def train_epoch_dann(
         scaler.step(optimizer)
         scaler.update()
 
-        running_loss += float(loss.item())
+        running_loss += float(loss.item()) * labels.size(0)
+        total_samples += labels.size(0)
         if mask.sum() > 0:
             probs = torch.softmax(class_logits[mask], dim=1)[:, 1].detach().cpu().numpy()
             preds = torch.argmax(class_logits[mask], dim=1).detach().cpu().numpy().tolist()
@@ -114,7 +114,7 @@ def train_epoch_dann(
             y_true.extend(trues)
 
         global_step += 1
-        pbar.set_postfix(loss=running_loss / (step + 1))
+        pbar.set_postfix(loss=running_loss / total_samples)
     metrics = {}
     if len(y_true) > 0:
         
@@ -127,7 +127,7 @@ def train_epoch_dann(
         except Exception:
             auc = None
         metrics = {"accuracy": float(acc), "precision": float(prec), "recall": float(rec), "f1": float(f1), "auc": auc}
-    metrics["loss"] = running_loss / max(1, len(loader))
+    metrics["loss"] = running_loss / total_samples
     return metrics, global_step
 
 # -------------------------
@@ -207,6 +207,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
     if args.dann:
         print("Starting DANN pretraining for", args.pretrain_epochs, "epochs")
         for epoch in range(args.pretrain_epochs):
+            model.train()
             dann_metrics, global_step = train_epoch_dann(
                 model=model,
                 loader=train_loader,
@@ -216,7 +217,6 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
                 global_step=global_step,
                 total_steps=total_pretrain_steps,
                 lambda_domain_weight=args.lambda_domain,
-                synthetic_indicators=args.synthetic_indicators,
                 tb_writer=writer,
                 weights=weights_tensor,
             )
@@ -250,7 +250,7 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
             else:
                 no_progress += 1
 
-            if no_progress >= 5:
+            if no_progress >= 2:
                 print("No progress in validation for 5 epochs, stopping DANN pretraining early.")
                 break
 
@@ -344,8 +344,8 @@ def train_single_model(args, model_name: str, train_ds, val_ds, device: torch.de
         else:
             no_progress += 1
 
-        if no_progress >= 10:
-            print("No progress in validation for 10 epochs, stopping training early.")
+        if no_progress >= 2:
+            print("No progress in validation for 2 epochs, stopping training early.")
             break
 
     if writer:
@@ -378,7 +378,7 @@ if __name__ == "__main__":
     parser.add_argument("--cutmix-prob", type=float, default=0.5)
     parser.add_argument("--tb-logdir", type=str, default=None, help="TensorBoard root dir")
     parser.add_argument("--log-every-steps", type=int, default=50)
-    parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--resume", action="store_true", help="Enable resume from last checkpoint if exists")
     parser.add_argument("--dann", action="store_true", help="Enable domain-adversarial pretraining (requires model.roadwalk.RoadworkClassifier)")
     parser.add_argument("--lambda-domain", type=float, default=1.0, help="Domain loss weight during DANN pretrain")
     parser.add_argument("--synthetic-indicators", nargs="*", default=["synthetic", "synth", "ai_", "t2i", "i2i", "generated"])

@@ -1,0 +1,57 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: resnet50
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: resnet50 ===
+Feature dimension: 2048
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/resnet50_20251029_010503
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8543 train_acc=0.8167 train_loss=1.0403 | val_acc=0.8568 val_loss=0.3156
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 2/8] train_f1=0.8709 train_acc=0.8384 train_loss=1.0280 | val_acc=0.8647 val_loss=0.3020
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 3/8] train_f1=0.8821 train_acc=0.8517 train_loss=1.0010 | val_acc=0.8732 val_loss=0.2969
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 4/8] train_f1=0.8870 train_acc=0.8575 train_loss=0.9886 | val_acc=0.8754 val_loss=0.2876
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 5/8] train_f1=0.8914 train_acc=0.8632 train_loss=0.9754 | val_acc=0.8778 val_loss=0.2989
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 6/8] train_f1=0.8966 train_acc=0.8699 train_loss=0.9622 | val_acc=0.8828 val_loss=0.2880
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 7/8] train_f1=0.8997 train_acc=0.8742 train_loss=0.9522 | val_acc=0.8834 val_loss=0.3083
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 8/8] train_f1=0.9010 train_acc=0.8754 train_loss=0.9456 | val_acc=0.8883 val_loss=0.2964
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8350, Loss: 0.4132 | Val Acc: 0.8814, Loss: 0.3202 Total Acc: 0.8165
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8320, Loss: 0.3976 | Val Acc: 0.8858, Loss: 0.3476 Total Acc: 0.8236
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 3/20] Train Acc: 0.8422, Loss: 0.3843 | Val Acc: 0.8891, Loss: 0.3317 Total Acc: 0.8247
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 4/20] Train Acc: 0.8393, Loss: 0.3832 | Val Acc: 0.8873, Loss: 0.3235 Total Acc: 0.8234
+[Epoch 5/20] Train Acc: 0.8497, Loss: 0.3770 | Val Acc: 0.8871, Loss: 0.3143 Total Acc: 0.8191
+[Epoch 6/20] Train Acc: 0.8416, Loss: 0.3730 | Val Acc: 0.8817, Loss: 0.3490 Total Acc: 0.8098
+[Epoch 7/20] Train Acc: 0.8518, Loss: 0.3587 | Val Acc: 0.8812, Loss: 0.3441 Total Acc: 0.8204
+[Epoch 8/20] Train Acc: 0.8553, Loss: 0.3499 | Val Acc: 0.8928, Loss: 0.2996 Total Acc: 0.8322
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 9/20] Train Acc: 0.8611, Loss: 0.3400 | Val Acc: 0.8858, Loss: 0.3053 Total Acc: 0.8180
+[Epoch 10/20] Train Acc: 0.8645, Loss: 0.3373 | Val Acc: 0.8935, Loss: 0.3197 Total Acc: 0.8355
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 11/20] Train Acc: 0.8573, Loss: 0.3417 | Val Acc: 0.8913, Loss: 0.2920 Total Acc: 0.8263
+[Epoch 12/20] Train Acc: 0.8705, Loss: 0.3155 | Val Acc: 0.8929, Loss: 0.2925 Total Acc: 0.8297
+[Epoch 13/20] Train Acc: 0.8797, Loss: 0.2996 | Val Acc: 0.8935, Loss: 0.2935 Total Acc: 0.8320
+[Epoch 14/20] Train Acc: 0.8792, Loss: 0.2928 | Val Acc: 0.8946, Loss: 0.2846 Total Acc: 0.8326
+[Epoch 15/20] Train Acc: 0.8882, Loss: 0.2862 | Val Acc: 0.8921, Loss: 0.2697 Total Acc: 0.8265
+[Epoch 16/20] Train Acc: 0.8863, Loss: 0.2832 | Val Acc: 0.8956, Loss: 0.3020 Total Acc: 0.8349
+[Epoch 17/20] Train Acc: 0.8895, Loss: 0.2827 | Val Acc: 0.8960, Loss: 0.2833 Total Acc: 0.8350
+[Epoch 18/20] Train Acc: 0.8894, Loss: 0.2791 | Val Acc: 0.8955, Loss: 0.2870 Total Acc: 0.8338
+[Epoch 19/20] Train Acc: 0.8915, Loss: 0.2744 | Val Acc: 0.8963, Loss: 0.2796 Total Acc: 0.8345
+[Epoch 20/20] Train Acc: 0.8965, Loss: 0.2675 | Val Acc: 0.8956, Loss: 0.2858 Total Acc: 0.8335
+No progress in validation for 10 epochs, stopping training early.
+Model resnet50 best checkpoint saved at: checkpoints/resnet50_best.pth

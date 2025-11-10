@@ -1,0 +1,24 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: convnext_tiny
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: convnext_tiny ===
+Feature dimension: 768
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/convnext_tiny_20251028_160755
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8531 train_acc=0.8155 train_loss=1.0838 | val_acc=0.8112 val_loss=0.5189
+Saved best pretrain checkpoint -> checkpoints/convnext_tiny_best.pth
+[DANN pretrain 2/8] train_f1=0.8737 train_acc=0.8413 train_loss=1.0268 | val_acc=0.6561 val_loss=43.1767
+[DANN pretrain 3/8] train_f1=0.8854 train_acc=0.8558 train_loss=0.9937 | val_acc=0.6561 val_loss=10.3401
+[DANN pretrain 4/8] train_f1=0.8916 train_acc=0.8637 train_loss=0.9709 | val_acc=0.6561 val_loss=21.6043
+[DANN pretrain 5/8] train_f1=0.8997 train_acc=0.8734 train_loss=0.9537 | val_acc=0.6561 val_loss=30.1178
+[DANN pretrain 6/8] train_f1=0.9045 train_acc=0.8798 train_loss=0.9393 | val_acc=0.6561 val_loss=13.5537
+No progress in validation for 5 epochs, stopping DANN pretraining early.
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8412, Loss: 0.3940 | Val Acc: 0.6561, Loss: 51.1627 Total Acc: 0.3280
+Saved new best checkpoint -> checkpoints/convnext_tiny_best.pth

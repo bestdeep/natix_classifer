@@ -1,0 +1,18 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: swin_small
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: swin_small ===
+Feature dimension: 768
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/swin_small_20251026_134923
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8373 train_acc=0.7955 train_loss=1.1538 | val_acc=0.6682 val_loss=1.4641
+Saved best pretrain checkpoint -> checkpoints/swin_small_best.pth
+[DANN pretrain 2/8] train_f1=0.8080 train_acc=0.7152 train_loss=1.2823 | val_acc=0.6561 val_loss=0.6436
+[DANN pretrain 3/8] train_f1=0.7891 train_acc=0.6529 train_loss=1.3643 | val_acc=0.6561 val_loss=0.6477
+[DANN pretrain 4/8] train_f1=0.7918 train_acc=0.6558 train_loss=1.3608 | val_acc=0.6561 val_loss=0.6437

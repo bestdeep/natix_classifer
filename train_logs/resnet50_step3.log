@@ -1,0 +1,31 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: resnet50
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: resnet50 ===
+Feature dimension: 2048
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/resnet50_20251031_083939
+Resuming training from checkpoint: checkpoints/resnet50_best.pth
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.9616 train_acc=0.9501 train_loss=0.8176 | val_acc=0.8870 val_loss=0.3725
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 2/8] train_f1=0.9638 train_acc=0.9531 train_loss=0.8002 | val_acc=0.8826 val_loss=0.4076
+[DANN pretrain 3/8] train_f1=0.9658 train_acc=0.9555 train_loss=0.7952 | val_acc=0.8853 val_loss=0.4052
+No progress in validation for 5 epochs, stopping DANN pretraining early.
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8946, Loss: 0.2827 | Val Acc: 0.8911, Loss: 0.3006 Total Acc: 0.8271
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8861, Loss: 0.2798 | Val Acc: 0.8895, Loss: 0.2696 Total Acc: 0.8224
+[Epoch 3/20] Train Acc: 0.8951, Loss: 0.2779 | Val Acc: 0.8920, Loss: 0.2900 Total Acc: 0.8284
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 4/20] Train Acc: 0.8873, Loss: 0.2782 | Val Acc: 0.8944, Loss: 0.2963 Total Acc: 0.8311
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 5/20] Train Acc: 0.8998, Loss: 0.2704 | Val Acc: 0.8845, Loss: 0.2988 Total Acc: 0.8193
+[Epoch 6/20] Train Acc: 0.8917, Loss: 0.2761 | Val Acc: 0.8904, Loss: 0.2994 Total Acc: 0.8255
+No progress in validation for 2 epochs, stopping training early.
+Model resnet50 best checkpoint saved at: checkpoints/resnet50_best.pth

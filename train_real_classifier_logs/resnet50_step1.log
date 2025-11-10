@@ -1,0 +1,21 @@
+Using device: cuda
+Training path: config/full_classification/train_hf_extracted_images.txt
+Validation path: config/full_classification/val_hf_extracted_images.txt
+Model to train: resnet50
+Total samples: 7693, Train: 6839, Val: 854
+
+=== Training model: resnet50 ===
+[INFO] Class distribution in training set:
+ - Class 0: 1164 samples
+ - Class 1: 5675 samples
+TensorBoard logs -> tb_logs/resnet50_20251109_092719
+Resuming training from checkpoint: checkpoints_real_synth/resnet50_best.pth
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8832, Loss: 0.2498 | Val Acc: 0.8378, Loss: 0.3724 Total Acc: 0.7134
+Saved new best checkpoint -> checkpoints_real_synth/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8976, Loss: 0.2229 | Val Acc: 0.8589, Loss: 0.3320 Total Acc: 0.7395
+Saved new best checkpoint -> checkpoints_real_synth/resnet50_best.pth
+[Epoch 3/20] Train Acc: 0.9071, Loss: 0.1993 | Val Acc: 0.8463, Loss: 0.3743 Total Acc: 0.7241
+[Epoch 4/20] Train Acc: 0.9180, Loss: 0.1797 | Val Acc: 0.8492, Loss: 0.3480 Total Acc: 0.7279
+No progress in validation for 2 epochs, stopping training early.
+Model resnet50 best checkpoint saved at: checkpoints_real_synth/resnet50_best.pth

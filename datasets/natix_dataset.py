@@ -260,5 +260,113 @@ class BalancedDomainSampler(Sampler):
         for b in batches:
             yield b
 
+class MaxOversamplingBatchSampler(Sampler):
+    def __init__(self, real_indices: List[int], synth_indices: List[int], batch_size: int):
+        self.batch_size = batch_size
+        self.class_indices = defaultdict(list)
+        self.labels = []
+        labels = [0] * len(real_indices) + [1] * len(synth_indices)
+        indices = real_indices + synth_indices
+        zip_indices = list(zip(indices, labels))
+        random.shuffle(zip_indices)
+        indices, labels = zip(*zip_indices)
+        for idx, label in zip(indices, labels):
+            self.class_indices[label].append(idx)
+            self.labels.append(label)
+        
+        self.max_class_size = max(len(idxs) for idxs in self.class_indices.values())
+        self.num_batches = (self.max_class_size * len(self.class_indices)) // batch_size
 
+        # Oversample
+        self.oversampled = []
+        for label, indices in self.class_indices.items():
+            times = self.max_class_size // len(indices) + 1
+            oversampled = (indices * times)[:self.max_class_size]
+            self.oversampled.extend(oversampled)
+        random.shuffle(self.oversampled)
 
+    def __iter__(self):
+        for i in range(0, len(self.oversampled), self.batch_size):
+            yield self.oversampled[i:i + self.batch_size]
+
+    def __len__(self):
+        return self.num_batches
+
+class ClassBalancedBatchSampler(Sampler):
+    def __init__(self, real_indices, synth_indices, batch_size):
+        self.labels = np.array([0] * len(real_indices) + [1] * len(synth_indices))
+        self.batch_size = batch_size
+        self.class_indices = defaultdict(list)
+        for idx, label in enumerate(self.labels):
+            if idx < len(real_indices):
+                actual_idx = real_indices[idx]
+            else:
+                actual_idx = synth_indices[idx - len(real_indices)]
+            self.class_indices[label].append(actual_idx)
+
+        self.num_classes = len(self.class_indices)
+        assert batch_size % self.num_classes == 0, "Batch size must be divisible by number of classes"
+
+        self.samples_per_class = batch_size // self.num_classes
+        self.min_class_len = min(len(idxs) for idxs in self.class_indices.values())
+        self.num_batches = self.min_class_len // self.samples_per_class
+
+    def __iter__(self):
+        class_iters = {
+            cls: np.random.permutation(indices).tolist()
+            for cls, indices in self.class_indices.items()
+        }
+
+        for _ in range(self.num_batches):
+            batch = []
+            for cls in range(self.num_classes):
+                cls_indices = class_iters[cls][:self.samples_per_class]
+                class_iters[cls] = class_iters[cls][self.samples_per_class:]
+                if len(cls_indices) < self.samples_per_class:
+                    cls_indices += np.random.choice(self.class_indices[cls], self.samples_per_class).tolist()
+                batch.extend(cls_indices)
+            np.random.shuffle(batch)
+            yield batch
+
+    def __len__(self):
+        return self.num_batches
+
+class BalancedOverTimeSampler(Sampler):
+    def __init__(self, real_indices, synth_indices, batch_size):
+        self.labels = np.array([0] * len(real_indices) + [1] * len(synth_indices))
+        self.batch_size = batch_size
+        self.class_indices = defaultdict(list)
+        for idx, label in enumerate(self.labels):
+            if idx < len(real_indices):
+                actual_idx = real_indices[idx]
+            else:
+                actual_idx = synth_indices[idx - len(real_indices)]
+            self.class_indices[label].append(actual_idx)
+
+        self.num_classes = len(self.class_indices)
+        assert batch_size % self.num_classes == 0
+        self.samples_per_class = batch_size // self.num_classes
+
+        self.max_class_size = max(len(v) for v in self.class_indices.values())
+        self.num_batches = (self.max_class_size * self.num_classes) // batch_size
+
+    def __iter__(self):
+        all_indices = {}
+        for cls, idxs in self.class_indices.items():
+            indices = idxs.copy()
+            random.shuffle(indices)
+            if len(indices) < self.num_batches * self.samples_per_class:
+                repeat_factor = (self.num_batches * self.samples_per_class) // len(indices) + 1
+                indices = (indices * repeat_factor)[:self.num_batches * self.samples_per_class]
+            all_indices[cls] = indices
+
+        for batch_idx in range(self.num_batches):
+            batch = []
+            for cls in range(self.num_classes):
+                offset = batch_idx * self.samples_per_class
+                batch.extend(all_indices[cls][offset:offset + self.samples_per_class])
+            random.shuffle(batch)
+            yield batch
+    
+    def __len__(self):
+        return self.num_batches

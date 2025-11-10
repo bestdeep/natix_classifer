@@ -1,0 +1,17 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: convnext_large
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: convnext_large ===
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/convnext_large_20251024_084854
+Resuming training from checkpoint: checkpoints/convnext_large_best.pth
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8985 train_acc=0.8712 train_loss=0.9647 | val_acc=0.6561 val_loss=13.7879
+Saved best pretrain checkpoint -> checkpoints/convnext_large_best.pth
+[DANN pretrain 2/8] train_f1=0.9002 train_acc=0.8740 train_loss=0.9586 | val_acc=0.6561 val_loss=21.8945
+[DANN pretrain 3/8] train_f1=0.9102 train_acc=0.8860 train_loss=0.9314 | val_acc=0.6561 val_loss=25.4284

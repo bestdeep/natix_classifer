@@ -1,0 +1,25 @@
+Using device: cuda
+Training path: config/full_classification/train_total_synthetic.txt
+Validation path: config/full_classification/val_total_synthetic.txt
+Model to train: resnet50
+Total samples: 42355, Train: 37651, Val: 4704
+
+=== Training model: resnet50 ===
+[INFO] Class distribution in training set:
+ - Class 0: 19370 samples
+ - Class 1: 18281 samples
+TensorBoard logs -> tb_logs/resnet50_20251109_183403
+Resuming training from checkpoint: checkpoints_synth_classifier/resnet50_best.pth
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8195, Loss: 0.4018 | Val Acc: 0.7682, Loss: 0.4426 Total Acc: 0.6647
+Saved new best checkpoint -> checkpoints_synth_classifier/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8362, Loss: 0.3730 | Val Acc: 0.7712, Loss: 0.4407 Total Acc: 0.6657
+Saved new best checkpoint -> checkpoints_synth_classifier/resnet50_best.pth
+[Epoch 3/20] Train Acc: 0.8212, Loss: 0.3994 | Val Acc: 0.7775, Loss: 0.4361 Total Acc: 0.6705
+Saved new best checkpoint -> checkpoints_synth_classifier/resnet50_best.pth
+[Epoch 4/20] Train Acc: 0.8331, Loss: 0.3762 | Val Acc: 0.7748, Loss: 0.4351 Total Acc: 0.6743
+Saved new best checkpoint -> checkpoints_synth_classifier/resnet50_best.pth
+[Epoch 5/20] Train Acc: 0.8449, Loss: 0.3555 | Val Acc: 0.7682, Loss: 0.4392 Total Acc: 0.6670
+[Epoch 6/20] Train Acc: 0.8559, Loss: 0.3336 | Val Acc: 0.7643, Loss: 0.4575 Total Acc: 0.6634
+No progress in validation for 2 epochs, stopping training early.
+Model resnet50 best checkpoint saved at: checkpoints_synth_classifier/resnet50_best.pth

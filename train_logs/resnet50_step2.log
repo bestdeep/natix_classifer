@@ -1,0 +1,32 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: resnet50
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: resnet50 ===
+Feature dimension: 2048
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/resnet50_20251030_153749
+Resuming training from checkpoint: checkpoints/resnet50_best.pth
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.9335 train_acc=0.9148 train_loss=0.8771 | val_acc=0.8916 val_loss=0.2984
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 2/8] train_f1=0.9361 train_acc=0.9182 train_loss=0.8695 | val_acc=0.8925 val_loss=0.3136
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 3/8] train_f1=0.9400 train_acc=0.9229 train_loss=0.8596 | val_acc=0.8874 val_loss=0.3206
+[DANN pretrain 4/8] train_f1=0.9425 train_acc=0.9259 train_loss=0.8543 | val_acc=0.8869 val_loss=0.3251
+[DANN pretrain 5/8] train_f1=0.9458 train_acc=0.9301 train_loss=0.8448 | val_acc=0.8883 val_loss=0.3585
+[DANN pretrain 6/8] train_f1=0.9492 train_acc=0.9345 train_loss=0.8375 | val_acc=0.8873 val_loss=0.3663
+[DANN pretrain 7/8] train_f1=0.9512 train_acc=0.9371 train_loss=0.8336 | val_acc=0.8866 val_loss=0.3599
+No progress in validation for 5 epochs, stopping DANN pretraining early.
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8856, Loss: 0.3000 | Val Acc: 0.8949, Loss: 0.2770 Total Acc: 0.8334
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8760, Loss: 0.3032 | Val Acc: 0.8898, Loss: 0.3176 Total Acc: 0.8263
+[Epoch 3/20] Train Acc: 0.8881, Loss: 0.2905 | Val Acc: 0.8876, Loss: 0.3007 Total Acc: 0.8226
+[Epoch 4/20] Train Acc: 0.8856, Loss: 0.2816 | Val Acc: 0.8869, Loss: 0.3009 Total Acc: 0.8196
+[Epoch 5/20] Train Acc: 0.8976, Loss: 0.2691 | Val Acc: 0.8877, Loss: 0.2904 Total Acc: 0.8209
+[Epoch 6/20] Train Acc: 0.8927, Loss: 0.2752 | Val Acc: 0.8911, Loss: 0.2879 Total Acc: 0.8279

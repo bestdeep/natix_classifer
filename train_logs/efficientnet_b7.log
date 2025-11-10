@@ -1,0 +1,54 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: efficientnet_b7
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: efficientnet_b7 ===
+Feature dimension: 2560
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/efficientnet_b7_20251027_004818
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8570 train_acc=0.8178 train_loss=1.0097 | val_acc=0.8670 val_loss=0.2983
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b7_best.pth
+[DANN pretrain 2/8] train_f1=0.8713 train_acc=0.8350 train_loss=1.0416 | val_acc=0.8318 val_loss=0.3814
+[DANN pretrain 3/8] train_f1=0.8754 train_acc=0.8416 train_loss=1.0331 | val_acc=0.8726 val_loss=0.2892
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b7_best.pth
+[DANN pretrain 4/8] train_f1=0.8776 train_acc=0.8448 train_loss=1.0282 | val_acc=0.8759 val_loss=0.2946
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b7_best.pth
+[DANN pretrain 5/8] train_f1=0.8815 train_acc=0.8494 train_loss=1.0136 | val_acc=0.8834 val_loss=0.2824
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b7_best.pth
+[DANN pretrain 6/8] train_f1=0.8857 train_acc=0.8554 train_loss=0.9988 | val_acc=0.8772 val_loss=0.5642
+[DANN pretrain 7/8] train_f1=0.8839 train_acc=0.8528 train_loss=1.0019 | val_acc=0.8791 val_loss=0.2737
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b7_best.pth
+[DANN pretrain 8/8] train_f1=0.8890 train_acc=0.8595 train_loss=0.9849 | val_acc=0.8562 val_loss=0.3318
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.8005, Loss: 0.4807 | Val Acc: 0.8705, Loss: 0.3739 Total Acc: 0.7908
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 2/20] Train Acc: 0.8126, Loss: 0.4342 | Val Acc: 0.8789, Loss: 0.3433 Total Acc: 0.8097
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 3/20] Train Acc: 0.8161, Loss: 0.4280 | Val Acc: 0.8718, Loss: 0.4743 Total Acc: 0.7956
+[Epoch 4/20] Train Acc: 0.8157, Loss: 0.4265 | Val Acc: 0.8784, Loss: 0.3548 Total Acc: 0.8096
+[Epoch 5/20] Train Acc: 0.8255, Loss: 0.4013 | Val Acc: 0.8879, Loss: 0.3129 Total Acc: 0.8201
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 6/20] Train Acc: 0.8289, Loss: 0.3980 | Val Acc: 0.8757, Loss: 0.3394 Total Acc: 0.7989
+[Epoch 7/20] Train Acc: 0.8343, Loss: 0.3877 | Val Acc: 0.8806, Loss: 0.3479 Total Acc: 0.8103
+[Epoch 8/20] Train Acc: 0.8339, Loss: 0.3857 | Val Acc: 0.8848, Loss: 0.3248 Total Acc: 0.8203
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 9/20] Train Acc: 0.8377, Loss: 0.3772 | Val Acc: 0.8815, Loss: 0.3285 Total Acc: 0.8086
+[Epoch 10/20] Train Acc: 0.8431, Loss: 0.3703 | Val Acc: 0.8926, Loss: 0.3088 Total Acc: 0.8290
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 11/20] Train Acc: 0.8467, Loss: 0.3612 | Val Acc: 0.8895, Loss: 0.3149 Total Acc: 0.8236
+[Epoch 12/20] Train Acc: 0.8529, Loss: 0.3492 | Val Acc: 0.8951, Loss: 0.3048 Total Acc: 0.8356
+Saved new best checkpoint -> checkpoints/efficientnet_b7_best.pth
+[Epoch 13/20] Train Acc: 0.8544, Loss: 0.3442 | Val Acc: 0.8952, Loss: 0.3161 Total Acc: 0.8338
+[Epoch 14/20] Train Acc: 0.8600, Loss: 0.3338 | Val Acc: 0.8913, Loss: 0.3116 Total Acc: 0.8278
+[Epoch 15/20] Train Acc: 0.8650, Loss: 0.3273 | Val Acc: 0.8851, Loss: 0.3095 Total Acc: 0.8170
+[Epoch 16/20] Train Acc: 0.8647, Loss: 0.3247 | Val Acc: 0.8867, Loss: 0.3143 Total Acc: 0.8210
+[Epoch 17/20] Train Acc: 0.8708, Loss: 0.3165 | Val Acc: 0.8851, Loss: 0.3066 Total Acc: 0.8184
+[Epoch 18/20] Train Acc: 0.8690, Loss: 0.3181 | Val Acc: 0.8819, Loss: 0.3076 Total Acc: 0.8121
+[Epoch 19/20] Train Acc: 0.8712, Loss: 0.3113 | Val Acc: 0.8893, Loss: 0.2972 Total Acc: 0.8244
+[Epoch 20/20] Train Acc: 0.8694, Loss: 0.3189 | Val Acc: 0.8844, Loss: 0.3095 Total Acc: 0.8166
+Model efficientnet_b7 best checkpoint saved at: checkpoints/efficientnet_b7_best.pth

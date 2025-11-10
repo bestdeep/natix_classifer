@@ -1,0 +1,54 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: efficientnet_b3
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: efficientnet_b3 ===
+Feature dimension: 1536
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/efficientnet_b3_20251024_221442
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.8569 train_acc=0.8181 train_loss=0.9986 | val_acc=0.8804 val_loss=0.2982
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b3_best.pth
+[DANN pretrain 2/8] train_f1=0.8749 train_acc=0.8408 train_loss=1.0262 | val_acc=0.8868 val_loss=0.2805
+Saved best pretrain checkpoint -> checkpoints/efficientnet_b3_best.pth
+[DANN pretrain 3/8] train_f1=0.8837 train_acc=0.8518 train_loss=1.0015 | val_acc=0.8807 val_loss=0.2753
+[DANN pretrain 4/8] train_f1=0.8875 train_acc=0.8566 train_loss=0.9912 | val_acc=0.8794 val_loss=0.2830
+[DANN pretrain 5/8] train_f1=0.8911 train_acc=0.8611 train_loss=0.9837 | val_acc=0.8846 val_loss=0.2663
+[DANN pretrain 6/8] train_f1=0.8961 train_acc=0.8677 train_loss=0.9768 | val_acc=0.8793 val_loss=0.2760
+[DANN pretrain 7/8] train_f1=0.8944 train_acc=0.8655 train_loss=0.9792 | val_acc=0.8799 val_loss=0.2893
+No progress in validation for 5 epochs, stopping DANN pretraining early.
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.7884, Loss: 0.5206 | Val Acc: 0.8598, Loss: 0.3947 Total Acc: 0.7897
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 2/20] Train Acc: 0.8038, Loss: 0.4619 | Val Acc: 0.8781, Loss: 0.3456 Total Acc: 0.8114
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 3/20] Train Acc: 0.8143, Loss: 0.4324 | Val Acc: 0.8783, Loss: 0.3703 Total Acc: 0.8139
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 4/20] Train Acc: 0.8164, Loss: 0.4225 | Val Acc: 0.8856, Loss: 0.3555 Total Acc: 0.8220
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 5/20] Train Acc: 0.8241, Loss: 0.4115 | Val Acc: 0.8820, Loss: 0.3459 Total Acc: 0.8147
+[Epoch 6/20] Train Acc: 0.8283, Loss: 0.4048 | Val Acc: 0.8820, Loss: 0.3335 Total Acc: 0.8166
+[Epoch 7/20] Train Acc: 0.8336, Loss: 0.3907 | Val Acc: 0.8914, Loss: 0.3044 Total Acc: 0.8283
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 8/20] Train Acc: 0.8347, Loss: 0.3868 | Val Acc: 0.8928, Loss: 0.3416 Total Acc: 0.8345
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 9/20] Train Acc: 0.8395, Loss: 0.3754 | Val Acc: 0.8899, Loss: 0.3262 Total Acc: 0.8308
+[Epoch 10/20] Train Acc: 0.8409, Loss: 0.3743 | Val Acc: 0.8940, Loss: 0.3261 Total Acc: 0.8341
+[Epoch 11/20] Train Acc: 0.8444, Loss: 0.3675 | Val Acc: 0.8940, Loss: 0.3150 Total Acc: 0.8354
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 12/20] Train Acc: 0.8498, Loss: 0.3591 | Val Acc: 0.8962, Loss: 0.2900 Total Acc: 0.8394
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 13/20] Train Acc: 0.8543, Loss: 0.3476 | Val Acc: 0.8910, Loss: 0.2949 Total Acc: 0.8309
+[Epoch 14/20] Train Acc: 0.8576, Loss: 0.3406 | Val Acc: 0.8981, Loss: 0.3137 Total Acc: 0.8394
+Saved new best checkpoint -> checkpoints/efficientnet_b3_best.pth
+[Epoch 15/20] Train Acc: 0.8644, Loss: 0.3311 | Val Acc: 0.8956, Loss: 0.2972 Total Acc: 0.8350
+[Epoch 16/20] Train Acc: 0.8650, Loss: 0.3272 | Val Acc: 0.8937, Loss: 0.2892 Total Acc: 0.8327
+[Epoch 17/20] Train Acc: 0.8680, Loss: 0.3225 | Val Acc: 0.8923, Loss: 0.2986 Total Acc: 0.8307
+[Epoch 18/20] Train Acc: 0.8671, Loss: 0.3247 | Val Acc: 0.8867, Loss: 0.3183 Total Acc: 0.8224
+[Epoch 19/20] Train Acc: 0.8697, Loss: 0.3190 | Val Acc: 0.8879, Loss: 0.3032 Total Acc: 0.8212
+[Epoch 20/20] Train Acc: 0.8677, Loss: 0.3227 | Val Acc: 0.8940, Loss: 0.2827 Total Acc: 0.8310
+Model efficientnet_b3 best checkpoint saved at: checkpoints/efficientnet_b3_best.pth

@@ -154,58 +154,48 @@ def safe_model_load(model, checkpoint):
 
     return model
 
-
-def evaluate(model, dataloader, device, num_classes):
+def evaluate(model, dataloader, device, num_classes, criterion=None):
     """
-    Evaluate model on dataloader where each batch yields:
-      images_stack: (B, K, C, H, W)
-      labels: (B,)  (ints or None)
-      paths: list
-      domains: optional
-
-    This function averages logits across K augmentations per sample and computes metrics per-sample.
+    Per-augmentation evaluation that matches train per-augmentation loss semantics.
+    criterion: same loss used in training (e.g., FocalLoss or CrossEntropy). If None, default CE.
     """
     model.eval()
-    criterion = nn.CrossEntropyLoss()
-    loss_list = []
-    all_preds = []
-    all_probs = []
-    all_trues = []
+    if criterion is None:
+        criterion = nn.CrossEntropyLoss(reduction="mean")
+
+    total_loss_sum = 0.0
+    total_labeled = 0
+    all_preds, all_probs, all_trues = [], [], []
 
     with torch.no_grad():
-        pbar = tqdm(dataloader, desc="val", leave=False)
-        for images_stack, labels, paths, _ in pbar:
-            # move to device
+        pbar = tqdm(dataloader, desc="eval", leave=False)
+        for images_stack, labels, _, _ in pbar:
             B, K, C, H, W = images_stack.shape
-            imgs_flat = images_stack.view(B * K, C, H, W).to(device)   # (B*K, C, H, W)
-            labels = ensure_tensor_labels(labels)                       # (B,)
-            # Create per-sample mask (True = labeled)
-            mask_per_sample = (labels >= 0)                             # (B,)
+            imgs_flat = images_stack.view(B * K, C, H, W).to(device)
 
-            # forward in one big batch
-            out = model(imgs_flat)
+            labels = ensure_tensor_labels(labels)
+            labels_flat = labels.unsqueeze(1).repeat(1, K).view(-1)  # (B*K,)
+            mask_flat = (labels_flat >= 0)
+            if mask_flat.sum().item() == 0:
+                continue
+
+            labels_flat_device = labels_flat.to(device)
+            imgs_masked = imgs_flat[mask_flat.to(device)]
+            labels_masked = labels_flat_device[mask_flat.to(device)]
+
+            out = model(imgs_masked)
             if isinstance(out, (tuple, list)):
-                class_logits_flat = out[0]
+                class_logits_masked = out[0]
             else:
-                class_logits_flat = out
+                class_logits_masked = out
 
-            # shape checks
-            if class_logits_flat.ndim != 2 or class_logits_flat.size(0) != B * K:
-                raise RuntimeError(f"Expected class_logits_flat shape (B*K, C), got {tuple(class_logits_flat.shape)}")
+            # classification loss (criterion returns mean per-batch of masked examples)
+            batch_loss = criterion(class_logits_masked, labels_masked)
+            n_labeled = labels_masked.size(0)
+            total_loss_sum += float(batch_loss.item()) * n_labeled
+            total_labeled += n_labeled
 
-            num_classes_model = class_logits_flat.size(1)
-            # reshape to (B, K, C) then average over K => (B, C)
-            class_logits = class_logits_flat.view(B, K, num_classes_model).mean(dim=1)  # (B, C)
-
-            # compute per-sample loss only for labeled samples
-            if mask_per_sample.sum() > 0:
-                labels_gpu = labels.to(device)
-                loss = criterion(class_logits[mask_per_sample], labels_gpu[mask_per_sample].to(device))
-                loss_list.append(float(loss.item()))
-            # else: no labeled samples in this batch — skip loss bookkeeping
-
-            # probs & preds per-sample
-            probs = torch.softmax(class_logits, dim=1).cpu().numpy()  # (B, C)
+            probs = torch.softmax(class_logits_masked, dim=1).cpu().numpy()  # (n_labeled, C)
             if num_classes == 2:
                 preds = (probs[:, 1] >= 0.5).astype(int).tolist()
                 prob_vals = probs[:, 1].tolist()
@@ -213,44 +203,29 @@ def evaluate(model, dataloader, device, num_classes):
                 preds = np.argmax(probs, axis=1).tolist()
                 prob_vals = probs.tolist()
 
-            # append only labeled entries
-            for i in range(B):
-                if not mask_per_sample[i]:
-                    continue
-                all_preds.append(int(preds[i]))
-                all_probs.append(prob_vals[i])
-                all_trues.append(int(labels[i].item()))
+            all_preds.extend(preds)
+            all_probs.extend(prob_vals)
+            all_trues.extend(labels_masked.cpu().numpy().tolist())
 
-    # compute final metrics
+    mean_loss = (total_loss_sum / total_labeled) if total_labeled > 0 else 0.0
+
     if len(all_trues) == 0:
-        return {"loss": 0.0, "accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0, "roc_auc": None, "mcc": None}
+        return {"loss": mean_loss, "accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0, "auc": None, "mcc": None, "n_examples": 0}
 
     acc = accuracy_score(all_trues, all_preds)
     precision, recall, f1, _ = precision_recall_fscore_support(all_trues, all_preds, average="binary" if num_classes == 2 else "macro", zero_division=0)
-    try:
-        roc_auc = None
-        if num_classes == 2 and len(set(all_trues)) > 1:
-            roc_auc = float(roc_auc_score(all_trues, all_probs))
-    except Exception:
-        roc_auc = None
-
+    auc = None
+    if num_classes == 2 and len(set(all_trues)) > 1:
+        try:
+            auc = float(roc_auc_score(all_trues, all_probs))
+        except Exception:
+            auc = 0
     try:
         mcc = float(matthews_corrcoef(all_trues, all_preds))
     except Exception:
-        mcc = None
+        mcc = 0.0
 
-    mean_loss = float(np.mean(loss_list)) if loss_list else 0.0
-
-    return {
-        "loss": mean_loss,
-        "accuracy": float(acc),
-        "precision": float(precision),
-        "recall": float(recall),
-        "f1": float(f1),
-        "roc_auc": roc_auc,
-        "mcc": mcc,
-        "n_samples": len(all_trues),
-    }
+    return {"loss": float(mean_loss), "accuracy": float(acc), "precision": float(precision), "recall": float(recall), "f1": float(f1), "auc": auc, "mcc": mcc, "n_examples": len(all_trues)}
 
 
 def evaluate_ensemble(model_paths: List[str], model_builders: List[Any], dataloader: DataLoader, device: torch.device, num_classes: int, weights: List[float]=None):

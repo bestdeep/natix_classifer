@@ -1,12 +1,13 @@
 Using device: cuda
 Training path: config/train.txt
 Validation path: config/val.txt
-Model to train: convnext_large
+Model to train: swin_v2_small
 Total samples: 50048, Train: 44490, Val: 5558
 
-=== Training model: convnext_large ===
+=== Training model: swin_v2_small ===
+Feature dimension: 768
 [INFO] Class distribution in training set:
  - Class 0: 20534 samples
  - Class 1: 23956 samples
-TensorBoard logs -> tb_logs/convnext_large_20251023_110011
+TensorBoard logs -> tb_logs/swin_v2_small_20251027_004619
 Starting DANN pretraining for 8 epochs

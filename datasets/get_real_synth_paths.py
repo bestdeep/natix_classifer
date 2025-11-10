@@ -22,38 +22,16 @@ def _gather_image_files(dirs: List[str]) -> List[str]:
     # deterministic order
     files = sorted(files)
     return files
-
-def _pair_metadata_files(image_file_paths: List[str]) -> List[str]:
-    metas = []
-    missing_meta_images = []
-    for img_path in image_file_paths:
-        meta_path = os.path.splitext(img_path)[0] + ".json"
-        if os.path.exists(meta_path):
-            metas.append(meta_path)
-        else:
-            missing_meta_images.append(img_path)
-    if missing_meta_images:
-        raise ValueError(
-            f"Missing metadata (.json) files for the following images (first 5 shown):\n"
-            + "\n".join(missing_meta_images[:5])
-        )
-    return metas
-
-def _load_metadata_file(meta_path: str) -> dict:
-    try:
-        with open(meta_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return data
-    except Exception as e:
-        raise RuntimeError(f"Failed to load metadata file {meta_path}: {e}")
     
 def get_image_metadata_pairs(dirs: List[str]) -> Tuple[List[str], List[str]]:
     image_files = _gather_image_files(dirs)
-    metadata_files = _pair_metadata_files(image_files)
     image_metadata_pairs = []
-    for img_path, meta_path in zip(image_files, metadata_files):
-        metadata = _load_metadata_file(meta_path)  # Validate metadata files
-        image_metadata_pairs.append((img_path, metadata.get("label", None)))
+    for img_path in image_files:
+        if "synth" in img_path.lower():
+            label = 1  # Synthetic images
+        else:
+            label = 0  # Real images
+        image_metadata_pairs.append((img_path, label))
     return image_metadata_pairs
 
 def split_dataset(
@@ -184,6 +162,7 @@ if __name__ == "__main__":
             if args.verbose:
                 print(f"Loaded {len(dataset)} pairs from {input_file}")
         merged_dataset = merge_datasets(all_datasets)
+        random.shuffle(merged_dataset)
         with open(args.output, "w", encoding="utf-8") as f:
             for img_metadata in merged_dataset:
                 f.write(f"{img_metadata[0]},{img_metadata[1]}\n")

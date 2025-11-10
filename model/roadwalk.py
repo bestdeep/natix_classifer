@@ -99,10 +99,8 @@ class RoadworkClassifier(nn.Module):
         # Create timm feature extractor: num_classes=0 returns features before final head
         # global_pool='avg' ensures a fixed vector per image
         self.backbone_name = backbone_name
-        self.feature_extractor = get_backbone_builder(backbone_name)(num_classes=0, pretrained=pretrained)
-        if not hasattr(self.feature_extractor, "num_features"):
-            raise ValueError(f"Backbone {backbone_name} does not expose `num_features`.")
-        feat_dim = int(self.feature_extractor.num_features)
+        self.feature_extractor, feat_dim = get_backbone_builder(backbone_name)(num_classes=0, pretrained=pretrained)
+        print(f"Feature dimension: {feat_dim}")
         
         self.classifier = ClassifierHead(in_features=feat_dim, hidden=head_hidden, dropout=dropout, num_classes=num_classes)
 

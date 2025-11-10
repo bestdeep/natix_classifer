@@ -1,0 +1,33 @@
+Using device: cuda
+Training path: config/train.txt
+Validation path: config/val.txt
+Model to train: resnet50
+Total samples: 50048, Train: 44490, Val: 5558
+
+=== Training model: resnet50 ===
+Feature dimension: 2048
+[INFO] Class distribution in training set:
+ - Class 0: 20534 samples
+ - Class 1: 23956 samples
+TensorBoard logs -> tb_logs/resnet50_20251103_111404
+Resuming training from checkpoint: checkpoints/resnet50_best.pth
+Starting DANN pretraining for 8 epochs
+[DANN pretrain 1/8] train_f1=0.9942 train_acc=0.9924 train_loss=0.7156 | val_acc=0.8843 val_loss=0.5639
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 2/8] train_f1=0.9938 train_acc=0.9918 train_loss=0.7148 | val_acc=0.8854 val_loss=0.5902
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 3/8] train_f1=0.9941 train_acc=0.9922 train_loss=0.7144 | val_acc=0.8864 val_loss=0.6016
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 4/8] train_f1=0.9922 train_acc=0.9897 train_loss=0.7202 | val_acc=0.8859 val_loss=0.5943
+[DANN pretrain 5/8] train_f1=0.9889 train_acc=0.9854 train_loss=0.7302 | val_acc=0.8873 val_loss=0.5351
+Saved best pretrain checkpoint -> checkpoints/resnet50_best.pth
+[DANN pretrain 6/8] train_f1=0.9898 train_acc=0.9866 train_loss=0.7275 | val_acc=0.8831 val_loss=0.5898
+[DANN pretrain 7/8] train_f1=0.9900 train_acc=0.9869 train_loss=0.7268 | val_acc=0.8875 val_loss=0.5794
+No progress in validation for 5 epochs, stopping DANN pretraining early.
+Starting supervised training for 20 epochs
+[Epoch 1/20] Train Acc: 0.9253, Loss: 0.2110 | Val Acc: 0.8893, Loss: 0.2860 Total Acc: 0.8259
+Saved new best checkpoint -> checkpoints/resnet50_best.pth
+[Epoch 2/20] Train Acc: 0.8982, Loss: 0.2577 | Val Acc: 0.8871, Loss: 0.3113 Total Acc: 0.8204
+[Epoch 3/20] Train Acc: 0.9124, Loss: 0.2428 | Val Acc: 0.8891, Loss: 0.2919 Total Acc: 0.8243
+No progress in validation for 2 epochs, stopping training early.
+Model resnet50 best checkpoint saved at: checkpoints/resnet50_best.pth
