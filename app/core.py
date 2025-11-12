@@ -19,16 +19,38 @@ class NatixClassifier:
         self.debug = debug
 
         # instantiate model (user must have RoadworkClassifier in scope)
-        self.model = RoadworkClassifier(
-            backbone_name=backbone_name,
-            pretrained=False,
-            domain_adapt=True,
-        )
+        self.models = [
+            RoadworkClassifier(
+                backbone_name=backbone_name,
+                pretrained=False,
+                domain_adapt=True,
+            ),
+            RoadworkClassifier(
+                backbone_name=backbone_name,
+                pretrained=False,
+                domain_adapt=True,
+            )
+        ]
 
-        model_path = f"checkpoints/{backbone_name}_best.pth"
+        model_path_1 = f"checkpoints/{backbone_name}_best_1.pth"
+        print(f"[NatixClassifier] Loading model from {model_path_1} on device {self.device}")
+        self.models[0] = self.safe_model_load(self.models[0], model_path_1)
+
+        model_path_2 = f"checkpoints/{backbone_name}_best_2.pth"
+        print(f"[NatixClassifier] Loading model from {model_path_2} on device {self.device}")
+        self.models[1] = self.safe_model_load(self.models[1], model_path_2)
+
+        for model in self.models:
+            model.to(self.device)
+            model.eval()
+
+        # normalization transform (expects input in [0,1])
+        self.normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+
+    def safe_model_load(self, model, model_path):
         # load checkpoint robustly
         checkpoint = torch.load(model_path, map_location=self.device)
-        # support multiple common keys
         state_keys = ['model_state', 'state_dict', 'model']
         state = None
         for k in state_keys:
@@ -41,7 +63,7 @@ class NatixClassifier:
 
         # sometimes saved with 'module.' prefixes (from DataParallel) — handle that
         try:
-            self.model.load_state_dict(state)
+            model.load_state_dict(state)
         except RuntimeError as e:
             # try stripping 'module.' prefix if present
             new_state = {}
@@ -50,14 +72,9 @@ class NatixClassifier:
                 if k.startswith("module."):
                     new_key = k[len("module."):]
                 new_state[new_key] = v
-            self.model.load_state_dict(new_state)
+            model.load_state_dict(new_state)
 
-        self.model.to(self.device)
-        self.model.eval()
-
-        # normalization transform (expects input in [0,1])
-        self.normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
+        return model
 
     def _preprocess(self, image: np.ndarray) -> torch.Tensor:
         """
@@ -109,24 +126,22 @@ class NatixClassifier:
         Returns: np.ndarray shape (B,) of probabilities for class index 1.
         """
         input_tensor = input_tensor.to(self.device)
-        with torch.no_grad():
-            output, _ = self.model(input_tensor)  # expected shape (B, num_classes)
-            # If model already returns logits, apply softmax to get probabilities
-            probs = F.softmax(output, dim=1)  # (B, num_classes)
-            probs_cpu = probs.cpu().numpy()
-
+        # Average predictions from both models
+        probs_list = []
+        for model in self.models:
+            with torch.no_grad():
+                output, _ = model(input_tensor)  # expected shape (B, num_classes)
+                # If model already returns logits, apply softmax to get probabilities
+                probs = F.softmax(output, dim=1)  # (B, num_classes)
+                probs_cpu = probs.cpu().numpy()
+                print(f"[NatixClassifier] model output probs shape: {probs_cpu}")
+                probs_list.append(probs_cpu)
+        avg_probs = np.mean(probs_list, axis=0)  # (B, num_classes)
         # By convention return probability of class 1. If your positive-class index is different, adjust idx. 1: Roadwork, 0: No Roadwork
         pos_idx = 1
-        if probs_cpu.shape[1] <= pos_idx:
-            # if only one output (sigmoid style), treat second class absent -> take single-column as prob
-            if probs_cpu.shape[1] == 1:
-                # if model returned single logit per sample, apply sigmoid
-                single_logits = output.cpu().numpy().flatten()
-                probs_pos = 1.0 / (1.0 + np.exp(-single_logits))
-                return probs_pos
-            else:
-                raise ValueError(f"Model output has shape {probs_cpu.shape}; cannot extract class {pos_idx}")
-        return probs_cpu[:, pos_idx]
+        if avg_probs.shape[1] <= pos_idx:
+            raise ValueError(f"Model output has insufficient classes: expected at least {pos_idx + 1}, got {avg_probs.shape[1]}")
+        return avg_probs[:, pos_idx]
 
     def predict(self, image: np.ndarray) -> Union[float, np.ndarray]:
         """
